@@ -374,18 +374,23 @@
 % ChemFullLabelStyle ChemShortLabelStyle.
 %
 
-
-                                %\CN@DEBUG{chem}{ChemLabelStyle is
-                                %the style that the generated labels
-                                %appear in}%
+% \begin{macro}{\ChemLabelStyle}
+%   ChemLabelStyle is the style that the generated labels appear in. It
+%   takes one argument which is the label to be formatted. The default
+%   implementation formats the label in a sloping bold font.
+%    \begin{macrocode}
 \DeclareRobustCommand*{\ChemLabelStyle}[1]{%
   \textsl{\bfseries{}#1}}
-
-                                %\CN@DEBUG{chem}{ChemFullLabelStyle is
-                                %the style that the generated full
-                                %name and labels appear in. Arguments
-                                %are Fullname = 1, Generated index = 2 
-                                %and user inputed sublabel = 3}%
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\ChemFullLabelStyle} 
+%   ChemFullLabelStyle is the style that the generated full entity name
+%   and labels appear in. It takes three arguments (1) the fullname, (2)
+%   the label for the key and (3) the label for the sub-key. The default
+%   implementation does not format the entity name and uses the
+%   ChemLabelStyle to format the label.
+%    \begin{macrocode}
 \DeclareRobustCommand*{\ChemFullLabelStyle}[3]{%
   \ifthenelse{\equal{}{#3}}{%
     #1 (\ChemLabelStyle{#2})%
@@ -393,11 +398,15 @@
     #1 (\ChemLabelStyle{#2#3})%
     }%
   }%
-                                %\CN@DEBUG{chem}{ChemShortLabelStyle is
-                                %the style that the generated labels
-                                %only citations appear in. Arguments
-                                %are Generated index = 1 and user
-                                %inputed sublabel = 2}% 
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\ChemShortLabelStyle}
+%   ChemShortLabelStyle is the style that the generated labels only
+%   citations appear in. It takes two arguments (1) the label for the
+%   key and (2) the label for the sub-key. The default implementation
+%   uses the ChemLabelStyle to format the label.
+%    \begin{macrocode} 
 \DeclareRobustCommand*{\ChemShortLabelStyle}[2]{%
   \ifthenelse{\equal{}{#2}}{%
     \ChemLabelStyle{#1}%
@@ -405,12 +414,27 @@
     \ChemLabelStyle{#1#2}%
     }%
   }%
-
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\ChemMainCounterStyle}
+%  Converts the counter used for the key label into a number or
+%  letter. The default implementation uses \texttt{\arabic} to generate
+%  a number. 
+%    \begin{macrocode} 
 \DeclareRobustCommand*{\ChemMainCounterStyle}[1]{%
   \arabic{#1}}
-
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\ChemSubCounterStyle}
+%  Converts the counter used for the sub-key label into a number or
+%  letter. The default implementation uses \texttt{\alph} to generate
+%  a letter. 
 \DeclareRobustCommand*{\ChemSubCounterStyle}[1]{%
   \alph{#1}}
+%    \end{macrocode}
+% \end{macro}
 
 \makeatletter
 %Create option to support dynamic debugging
