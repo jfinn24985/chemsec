@@ -79,54 +79,80 @@
 % document.
 %
 % 
-% Design brief
+% \section{Design brief}
 % 
 % The package should be able to consistently label an entity throughout
-% the document based on a key. The label can be either a consecutive
-% number of a defined label. These can be combined with a sublabel,
-% which can also be consecutive or defined.
+% the document based on a user-defined key. The label can be either a
+% consecutive number or a user-defined label. These labels can be
+% combined with a sublabel, which can also be consecutive or
+% user-defined.
 % 
-% When sublabels are used a key and sub-key are required. The entity
-% associated with the key and no sub-key is considered to be a generic
-% entity for those entities with the same key and a sub-key.
+% When sub-labels are used a user-supplied key and sub-key are
+% required. Any entity associated with the key without a sub-key is
+% considered to be a generic entity for any entities defined with the
+% same key and a sub-key. A chemistry example of this is ``methyl
+% acetate (1a)'' and ``ethyl acetate (1b)'' being specific examples of
+% ``acetic acid ester (1)''.
 % 
-% Limits:
+% \subsection{Limits}
 % 
-% - The package can provide consecutive labels or defined labels but not
-% both.
+% \begin{itemise}
+% \item The package can provide consecutive labels or user-defined
+%   labels but not both.
 % 
-% - The package can provide consecutive lables or defined sublabels but
-%   not both for each label.
+% \item Unless user-defined labels are used, consecutive labels are
+%   numeric for labels and alphabetic for sub-labels.
 % 
+% \item The package can provide only a single set of consecutive labels.
 % 
-% Actions:
+% \item The package can provide consecutive sub-labels or user-defined
+%   sub-labels but not both for each label.
+% \end{itemise}
 % 
-% - The first time a key is used in the text it is given it consecutive
-% number. It can also (optionally) output a full name of the entity. A
-% label can be used, for example in a table, abstract or figure, without
-% registering as part of the normal numbering. The names of entities can
-% be placed anywhere in the document.
+% \subsection{Actions}
 % 
-% - The package can be asked to output the full text of an entity with or
-% without the label appended.
+% \begin{itemise}
+% \item The first time the XXX, YYY macros appear in the latex document
+%   with a given key is where the consecutive number label for the key
+%   is defined (unless user-defined label are being used).
 % 
-% - The label will be typeset in a particular, user configurable,
-% style. The label should be consistently formatted, even in math-mode.
+% \item Using macros XXX, YYY provides the label without defining the
+%   consecutive number label. This allows the label to appear, for
+%   example in a table, abstract or figure, before the desired defining
+%   location of the label.
 % 
+% \item The names of entities can be defined anywhere in the document
+%   and appear in a user-controlled manner.
 % 
-% The package does not currently:
+% \item The basic macros typeset the entity name and label at the first
+%   defining reference position and only the label in other places.
 % 
-% - Detect that the full text output occurs at the beginning of a
-% sentence and capitalise the first non-capital letter.
+% \item A range of advanced macros allow greater control over the
+%   display of the entity name and label.  For example the user can
+%   output a label and sub-label but use the name of the generic entity.
+%   A chemistry example of this with ``ethyl acetate (1b)'' and its
+%   generic entity ``acetic acid ester (1)'' appearing as ``\dots{}gives
+%   the second acetic acid ester (1b)\dots{}''.
 % 
+% \item The label will be typeset in a particular, user configurable,
+%   style. The label should be consistently formatted, even in
+%   math-mode.
 % 
-% The package will:
+% \item The label can be used transparently by other packages. For
+%   example it can be used with the \texttt{psfrag} package to inject
+%   the correct labels into figures at documentation preparation time
+%   rather than having to recreate new figures whenever the label
+%   numbering changes.
 % 
-% - Offer the ability to output the text of the generic entity instead of
-%   the sub-entity (with and without label)
+% \end{itemise}
 % 
-% - Consecutive labels will be numerical for labels and alphabetic for
-%   sub-labels.
+% \subsection{Known bugs}
+% 
+% The package does not currently detect when output occurs at the
+% beginning of a sentence and automatically capitalise the first
+% non-capital letter. The only solution is to avoid using the macros
+% that might produce entity names at the start of a sentence.
+% 
 % 
 % 
 % Macros:
