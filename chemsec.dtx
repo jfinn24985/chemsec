@@ -96,7 +96,7 @@
 % 
 % \subsection{Limits}
 % 
-% \begin{itemise}
+% \begin{itemize}
 % \item The package can provide consecutive labels or user-defined
 %   labels but not both.
 % 
@@ -107,11 +107,11 @@
 % 
 % \item The package can provide consecutive sub-labels or user-defined
 %   sub-labels but not both for each label.
-% \end{itemise}
+% \end{itemize}
 % 
 % \subsection{Actions}
 % 
-% \begin{itemise}
+% \begin{itemize}
 % \item The first time the XXX, YYY macros appear in the latex document
 %   with a given key is where the consecutive number label for the key
 %   is defined (unless user-defined label are being used).
@@ -144,7 +144,7 @@
 %   rather than having to recreate new figures whenever the label
 %   numbering changes.
 % 
-% \end{itemise}
+% \end{itemize}
 % 
 % \subsection{Known bugs}
 % 
@@ -174,49 +174,49 @@
 % preparation as a way display the names along with their key and
 % sub-keys. 
 %
-% : \consecCite
+% : consecCite
 %   Output label and optionally the full name
 % 
-% : \consecCiteLabel
+% : consecCiteLabel
 %   Output label only
 % 
-% : \consecNoFullname
-%   Suppress displaying the full name the first time \consecCite is
+% : consecNoFullname
+%   Suppress displaying the full name the first time consecCite is
 %   called.
 % 
-% : \consecCiteFull
+% : consecCiteFull
 %   Output the full name and label
 % 
-% : \consecCiteFullOnly
+% : consecCiteFullOnly
 %   Output the full name, no lobel.
 % 
-% : \consecCiteGeneric
+% : consecCiteGeneric
 %   Output the full name of the generic entity with the label of the
 %   sub-entity
 % 
-% : \consecEntity [label]{key}{text}
+% : consecEntity [label]{key}{text}
 %   Define a generic entity
 % 
-% : \consecSubEntity [label][sublabel]{key}{subkey}{text}
+% : consecSubEntity [label][sublabel]{key}{subkey}{text}
 %   Define a specific entity
 % 
-% : \consecEntityTable
+% : consecEntityTable
 %   Output a table of entity names and labels. Can
 %   also output keys.  This is for creating a useful reference table
 %   when editing a document rather than for final output.
 % 
 % 
-% : \consecEntityTitle
-%   Text used in \consecEntityTable for title of the table
+% : consecEntityTitle
+%   Text used in consecEntityTable for title of the table
 % 
-% : \consecEntityNameTitle
-%   Text used in \consecEntityTable for entity name column
+% : consecEntityNameTitle
+%   Text used in consecEntityTable for entity name column
 % 
-% : \consecEntityLabelTitle
-%   Text used in \consecEntityTable for label column
+% : consecEntityLabelTitle
+%   Text used in consecEntityTable for label column
 % 
-% : \consecEntityKeyTitle
-%   Text used in \consecEntityTable for the optional key column
+% : consecEntityKeyTitle
+%   Text used in consecEntityTable for the optional key column
 % 
 % 
 % Package options:
@@ -296,7 +296,7 @@
 %
 % Revision 1.7  1999/08/23 00:39:39  finnerty
 % Revamped and simplified RealCite to include processing of sublabels by
-% index or explicit. This meant that macro CN@FindSubLabel was no longer
+% index or explicit. This meant that macro CN\@{}FindSubLabel was no longer
 % needed and has been removed.
 %
 % A side effect of the revamp was that some warning about labelling
@@ -310,7 +310,7 @@
 % MAJOR version update.
 % This version handles implicit and explicit sublabels. The explicit and
 % implicit sublabels may have a un-sublabelled key which can be accessed
-% implicitly using the ChemM[F|S]Cite commands.
+% implicitly using the ChemMFSCite commands.
 %
 % This version saves definitions to the auxilliary file. When a compound
 % is multiply defined the earliest definition is used, all subsequent
@@ -323,7 +323,7 @@
 %
 % Revision 1.5  1999/08/18 06:12:05  finnerty
 % Partly acheived goal. Improved ScanKeyList and ScanSubKeyList work
-% except for a bug in ScanSubKeyList where \CN@element refuses to be
+% except for a bug in ScanSubKeyList where CN\@{}element refuses to be
 % subdivided in the MainKey macro.
 %
 % Revision 1.4  1999/07/12 02:07:48  finnerty
@@ -375,9 +375,9 @@
 %
 
 % \begin{macro}{\ChemLabelStyle}
-%   ChemLabelStyle is the style that the generated labels appear in. It
-%   takes one argument which is the label to be formatted. The default
-%   implementation formats the label in a sloping bold font.
+%   ChemLabelStyle formats the label. It takes one argument which is the
+%   label to be formatted. The default implementation formats the label
+%   in a sloping bold font.
 %    \begin{macrocode}
 \DeclareRobustCommand*{\ChemLabelStyle}[1]{%
   \textsl{\bfseries{}#1}}
@@ -385,11 +385,11 @@
 % \end{macro}
 %
 % \begin{macro}{\ChemFullLabelStyle}
-%   ChemFullLabelStyle is the style that the generated full entity name
-%   and labels appear in. It takes three arguments (1) the fullname, (2)
-%   the label for the key and (3) the label for the sub-key. The default
-%   implementation does not format the entity name and uses the
-%   ChemLabelStyle to format the label.
+%   ChemFullLabelStyle formats the full entity name and label. It takes
+%   three arguments (1) the fullname, (2) the label for the key and (3)
+%   the label for the sub-key. The default implementation does not
+%   format the entity name and uses the ChemLabelStyle to format the
+%   label.
 %    \begin{macrocode}
 \DeclareRobustCommand*{\ChemFullLabelStyle}[3]{%
   \ifthenelse{\equal{}{#3}}{%
@@ -402,10 +402,10 @@
 % \end{macro}
 %
 % \begin{macro}{\ChemShortLabelStyle}
-%   ChemShortLabelStyle is the style that the generated labels only
-%   citations appear in. It takes two arguments (1) the label for the
-%   key and (2) the label for the sub-key. The default implementation
-%   uses the ChemLabelStyle to format the label.
+%   ChemShortLabelStyle formats the labels when they appear without the
+%   entity name. It takes two arguments (1) the label for the key and
+%   (2) the label for the sub-key. The default implementation uses the
+%   ChemLabelStyle to format the label.
 %    \begin{macrocode}
 \DeclareRobustCommand*{\ChemShortLabelStyle}[2]{%
   \ifthenelse{\equal{}{#2}}{%
@@ -419,7 +419,7 @@
 %
 % \begin{macro}{\ChemMainCounterStyle}
 %  Converts the counter used for the key label into a number or
-%  letter. The default implementation uses \texttt{\arabic} to generate
+%  letter. The default implementation uses \texttt{arabic} to generate
 %  a number.
 %    \begin{macrocode}
 \DeclareRobustCommand*{\ChemMainCounterStyle}[1]{%
@@ -429,7 +429,7 @@
 %
 % \begin{macro}{\ChemSubCounterStyle}
 %  Converts the counter used for the sub-key label into a number or
-%  letter. The default implementation uses \texttt{\alph} to generate
+%  letter. The default implementation uses \texttt{alph} to generate
 %  a letter.
 %    \begin{macrocode}
 \DeclareRobustCommand*{\ChemSubCounterStyle}[1]{%
@@ -439,7 +439,9 @@
 %
 % \begin{macrocode}
 \makeatletter
+% \end{macrocode}
 %Create option to support dynamic debugging
+% \begin{macrocode}
 \gdef\CN@DEBUG #1#2{}  
 \gdef\CN@WARN #1#2{\PackageInfo{#1}{#2}}  
 \gdef\CN@DRAFT #1{}
@@ -461,7 +463,9 @@
 \newcounter{CN@LabelIndex}      
 \newcounter{CN@SubLabelIndex}      
 
+% \end{macrocode}
 %some default values for when macro gets called without an argument
+% \begin{macrocode}
 \expandafter\def\csname CN@@label\endcsname{999}
 \expandafter\def\csname CN@@name\endcsname{X}
 \expandafter\def\csname CN@@sublabel\endcsname{X}
@@ -548,6 +552,7 @@
                                 % indexcount
   \setboolean{#2}{true}%
   \CN@DEBUG{chem}{GetLabel: looking for '#1'}%
+% \end{macrocode}
 %  \if\csname CN@#1@label\endcsname\relax %if undef
 %    \CN@WARN{chem}{GetLabel: Error accessing label for '#1'. Possibly 
 %      misspelled or used before it was defined defined.}%
@@ -556,6 +561,7 @@
 %    \expandafter\xdef\csname CN@#1@label\endcsname{\arabic{CN@MaxLabelIndex}}%
 %    \setboolean{#2}{false}%
 %  \fi%
+% \begin{macrocode}
   \setcounter{#3}{\csname CN@#1@label\endcsname}%
   \CN@DEBUG{chem}{GetLabel: Label count is \arabic{#3}}%
   \ifthenelse{\value{#3} = 0}{%
@@ -692,9 +698,11 @@
   \write\@auxout{\string\NoCite{#1}}\CN@ChemMSCite{#1}%
   }%
 
+% \end{macrocode}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Public Functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \begin{macrocode}
 
 \DeclareRobustCommand*{\ChemCite}{%
   %\CN@DEBUG{chem}{in Chemcite}%
@@ -723,3 +731,6 @@
 
 \makeatother
 % \end{macrocode}
+%
+% \Finale
+\endinput
