@@ -1,0 +1,565 @@
+% Consecutive label
+% 
+% A cross-reference system designed for scientific publications.
+% 
+% Design brief
+% 
+% The package should be able to consistently label an entity throughout
+% the document based on a key. The label can be either a consecutive
+% number of a defined label. These can be combined with a sublabel,
+% which can also be consecutive or defined.
+% 
+% When sublabels are used a key and sub-key are required. The entity
+% associated with the key and no sub-key is considered to be a generic
+% entity for those entities with the same key and a sub-key.
+% 
+% Limits:
+% 
+% - The package can provide consecutive labels or defined labels but not
+% both.
+% 
+% - The package can provide consecutive lables or defined sublabels but
+%   not both for each label.
+% 
+% 
+% Actions:
+% 
+% - The first time a key is used in the text it is given it consecutive
+% number. It can also (optionally) output a full name of the entity. A
+% label can be used, for example in a table, abstract or figure, without
+% registering as part of the normal numbering. The names of entities can
+% be placed anywhere in the document.
+% 
+% - The package can be asked to output the full text of an entity with or
+% without the label appended.
+% 
+% - The label will be typeset in a particular, user configurable,
+% style. The label should be consistently formatted, even in math-mode.
+% 
+% 
+% The package does not currently:
+% 
+% - Detect that the full text output occurs at the beginning of a
+% sentence and capitalise the first non-capital letter.
+% 
+% 
+% The package will:
+% 
+% - Offer the ability to output the text of the generic entity instead of
+%   the sub-entity (with and without label)
+% 
+% - Consecutive labels will be numerical for labels and alphabetic for
+%   sub-labels.
+% 
+% 
+% Macros:
+% 
+% : \consecLabelStyle
+%   The style for the labels.
+% 
+% : \consecCite
+%   Output label and optionally the full name
+% 
+% : \consecCiteLabel
+%   Output label only
+% 
+% : \consecNoFullname
+%   Suppress displaying the full name the first time \consecCite is
+%   called.
+% 
+% : \consecCiteFull
+%   Output the full name and label
+% 
+% : \consecCiteFullOnly
+%   Output the full name, no lobel.
+% 
+% : \consecCiteGeneric
+%   Output the full name of the generic entity with the label of the
+%   sub-entity
+% 
+% : \consecEntity [label]{key}{text}
+%   Define a generic entity
+% 
+% : \consecSubEntity [label][sublabel]{key}{subkey}{text}
+%   Define a specific entity
+% 
+% : \consecEntityTable
+%   Output a table of entity names and labels. Can
+%   also output keys.  This is for creating a useful reference table
+%   when editing a document rather than for final output.
+% 
+% 
+% : \consecEntityTitle
+%   Text used in \consecEntityTable for title of the table
+% 
+% : \consecEntityNameTitle
+%   Text used in \consecEntityTable for entity name column
+% 
+% : \consecEntityLabelTitle
+%   Text usef in \consecEntityTable for label column
+% 
+% : \consecEntityKeyTitle
+%   Text usef in \consecEntityTable for the optional key column
+% 
+% 
+% Package options:
+% 
+% : noconsecutive
+%   Turns off consecutive numbering for main labels
+% 
+% : uppersub
+%   Turns on using UPPER case consecutive numbering for sub labels.
+% 
+% : alpha
+%   Turns on using alphabetic numbering for main labels
+% 
+% : upper
+%   Turns on UPPER case alphabetic numbering for main labels (must be
+%   used with "alpha"
+% 
+% 
+% (obsolete, now uses "aux") The package uses its own file to store
+% labels that are read in at start up and written out during a run
+% (Unused labels from this file generate a warning but do not remove
+% entry, even is not defined. In this way the file can be used liek a
+% bibtex data file.
+% 
+% 
+% 
+% 
+%
+% RCS info
+% $Log: consec.sty,v $
+% Revision 1.1.1.1  2005/11/18 08:58:06  finnerty
+% Consecutive: A latex package for consecutively numbered entities.
+%
+% Revision 1.10  1999/12/10 04:52:45  finnerty
+% This version provides star forms of the standard commands (except for
+% NoCite). The star forms override the standard first entry, first
+% number by adding NoCite commands into the auxfile. As these files are
+% read in before the document, but in order they should provide the
+% author with greater flexibility in defining the numbering order.
+%
+% An optional argument that would allow the author to set specific
+% numbers in addition to automatic numbering was rejected. Either the
+% author should define a numerical label for all compounds using the
+% (no-longer) optional sublabel field and turns off auto-numbering or
+% use the NoCite{} and Chem??Cite*{} commands to get the desired
+% numbering.
+%
+% Revision 1.9  1999/12/09 22:21:37  finnerty
+% First Working Version.
+%
+% Revision 1.8  1999/09/28 00:11:15  finnerty
+% New version has changed entire philosophy. The use of lists while
+% conservative of resources ran like a wet week in the summer
+% holidays. This version defines three control words for each key so it
+% uses far more resources but runs an order of magnitude faster.
+%
+% It cannot handle sublabels for mainkey which have "auto" subkeys.
+%
+% It doesn't handle part processing of documents at all---yet..
+%
+% Revision 1.7  1999/08/23 00:39:39  finnerty
+% Revamped and simplified RealCite to include processing of sublabels by
+% index or explicit. This meant that macro CN@FindSubLabel was no longer
+% needed and has been removed.
+%
+% A side effect of the revamp was that some warning about labelling
+% could be done. However, editing the text in a DefineChemical will NOT
+% give a warning and will NOT bue used in the current run, as the
+% package will see the version in the '.aux' file first and ignore the
+% new DefinChemical. However, it does store the new version in the
+% '.aux' file so rerunning will make the new values current.
+%
+% Revision 1.6  1999/08/20 06:23:46  finnerty
+% MAJOR version update.
+% This version handles implicit and explicit sublabels. The explicit and
+% implicit sublabels may have a un-sublabelled key which can be accessed
+% implicitly using the ChemM[F|S]Cite commands.
+%
+% This version saves definitions to the auxilliary file. When a compound
+% is multiply defined the earliest definition is used, all subsequent
+% definitions are ignored.
+%
+% TODO: Output table of chemicals and numbers.
+% TODO: Output "Warning, need to rerun LaTeX message" as appropriate.
+%
+% POSSIBLE extensions: ChemMainCite = ChemMFCite + (ChemSCite)
+%
+% Revision 1.5  1999/08/18 06:12:05  finnerty
+% Partly acheived goal. Improved ScanKeyList and ScanSubKeyList work
+% except for a bug in ScanSubKeyList where \CN@element refuses to be
+% subdivided in the MainKey macro.
+%
+% Revision 1.4  1999/07/12 02:07:48  finnerty
+% Corrected behaviour of subkeys to output the fullname the first time
+% they are called, regardless of whether the mainkey has been called.
+%
+% Revision 1.3  1999/07/12 00:52:16  finnerty
+% Added the ability to output a single index for each mainkey,
+% regardless of the sublabel. However, a only the first time one of the
+% subkey is output is the 'fullname (label)' given. Subsequent subkeys are
+% only output with the 'label'.
+%
+% Revision 1.2  1999/07/09 07:30:44  finnerty
+% Updated the chem style with the ability to handle user defined
+% chemical names and sublabels, that may be blank. The chemical names
+% are output the first time a citation is used along with the index and
+% sublabel as a 'full' citation. Subsequently a 'short' citation
+% containing only the index and sublabel is output. Currently, although
+% a sublabel can be used each key is still given a unique index.
+%
+% Updated the chem style with two new user redefinable style
+% functions. These functions allow the user to have complete control
+% over the style of the citation output. This means that if a user wants
+% to use only their labels, a quick hack could be to redefine these
+% style to ignore the generated index.
+%
+% Revision 1.1  1999/06/29 06:08:30  finnerty
+% Initial revision
+%
+% 
+% Chemical Numbering Latex Macro system.
+%
+% Date:   1999/06
+% Author: Justin J Finnerty
+%
+% This uses a simple first cited first numbered algorithm to generate a
+% unique sequential label for a set of compounds. It relies on a set of
+% chemical definitions that can appear anywhere in the text and are
+% stored in the '.aux' file at program termination and read in at program 
+% start up.
+%
+% Note on programming style. All the functions are declared using LaTeX
+% commands unless using TeX functions edef and xdef was required. The
+% public functions have been defined using LaTeX2e's
+% DeclareRobustCommand*{}. 
+%
+% The user controls the output of the citations using ChemLabelStyle,
+% ChemFullLabelStyle ChemShortLabelStyle.
+%
+
+\NeedsTeXFormat{LaTeX2e}[1994/06/01] 
+\ProvidesPackage{chem}[1999/08/18, $Revision: 1.1.1.1 $]
+\RequirePackage{ifthen}[1994/06/01]
+
+                                %\CN@DEBUG{chem}{ChemLabelStyle is
+                                %the style that the generated labels
+                                %appear in}%
+\DeclareRobustCommand*{\ChemLabelStyle}[1]{%
+  \textsl{\bfseries{}#1}}
+
+                                %\CN@DEBUG{chem}{ChemFullLabelStyle is
+                                %the style that the generated full
+                                %name and labels appear in. Arguments
+                                %are Fullname = 1, Generated index = 2 
+                                %and user inputed sublabel = 3}%
+\DeclareRobustCommand*{\ChemFullLabelStyle}[3]{%
+  \ifthenelse{\equal{}{#3}}{%
+    #1 (\ChemLabelStyle{#2})%
+    }{%
+    #1 (\ChemLabelStyle{#2#3})%
+    }%
+  }%
+                                %\CN@DEBUG{chem}{ChemShortLabelStyle is
+                                %the style that the generated labels
+                                %only citations appear in. Arguments
+                                %are Generated index = 1 and user
+                                %inputed sublabel = 2}% 
+\DeclareRobustCommand*{\ChemShortLabelStyle}[2]{%
+  \ifthenelse{\equal{}{#2}}{%
+    \ChemLabelStyle{#1}%
+    }{%
+    \ChemLabelStyle{#1#2}%
+    }%
+  }%
+
+\DeclareRobustCommand*{\ChemMainCounterStyle}[1]{%
+  \arabic{#1}}
+
+\DeclareRobustCommand*{\ChemSubCounterStyle}[1]{%
+  \alph{#1}}
+
+\makeatletter
+%Create option to support dynamic debugging
+\gdef\CN@DEBUG #1#2{}  
+\gdef\CN@WARN #1#2{\PackageInfo{#1}{#2}}  
+\gdef\CN@DRAFT #1{}
+\DeclareOption{debug}{%
+  \gdef\CN@DEBUG #1#2{\PackageInfo{#1}{#2}}%
+  \gdef\CN@WARN #1#2{\PackageWarning{#1}{#2}}%
+  \gdef\CN@DRAFT #1{$^{[#1]}$}%
+  }
+\DeclareOption{draft}{%
+  \gdef\CN@DRAFT #1{$^{[#1]}$}%
+  }
+\ProcessOptions
+
+
+                                %\CN@DEBUG{chem}{LabelIndex is the
+                                %number of the index that is output as 
+                                %the label}%
+\newcounter{CN@MaxLabelIndex}      
+\setcounter{CN@MaxLabelIndex}{0}
+\newcounter{CN@LabelIndex}      
+\newcounter{CN@SubLabelIndex}      
+
+%some default values for when macro gets called without an argument
+\expandafter\def\csname CN@@label\endcsname{999}
+\expandafter\def\csname CN@@name\endcsname{X}
+\expandafter\def\csname CN@@sublabel\endcsname{X}
+                                %\CN@DEBUG{chem}{KeyFound is a
+                                %boolean to signal whether the key was 
+                                %found in the keylist. Failure to be
+                                %found indicates that this is the
+                                %first time this key was cited}% 
+\newboolean{CN@KeyFound}
+
+                                %\CN@DEBUG{chem}{ScanList is a
+                                %boolean to signal whether the key
+                                %was found in the last loop of the
+                                %list scan.}% 
+\newboolean{CN@ScanList}
+\newboolean{CN@Warning}
+\setboolean{CN@Warning}{false}
+
+                                %\CN@DEBUG{chem}{MainKey splits a
+                                %key that is in the format Main!Sub,
+                                %returning only the Main part}%
+\gdef\CN@mainpartofkey (#1!#2){#1}
+\gdef\CN@MainKey (#1){\CN@mainpartofkey(#1!)}%
+
+\AtEndDocument{%
+  \ifthenelse{\boolean{CN@Warning}}{%
+    \PackageWarningNoLine{chem}{Chem-label(s) were used before they were defined.
+      Rerun to get chem-labels right}%
+    }{%else
+    %do nothing
+    }%end if
+  }%end def
+
+\DeclareRobustCommand*{\DefineChemical}[3]{%
+                                %\CN@DEBUG{chem}{Entering 
+                                %DefineChemical}%
+  \CN@definenewchemical{#1}{#2}{#3}%
+  \write\@auxout{\string\CN@definenewchemical{#1}{#2}{#3}}%
+  }%end def
+
+\DeclareRobustCommand*{\CN@definenewchemical}[3]{%key, name, label
+  %check for previous definition of name
+  \if\csname CN@#1@label\endcsname\relax%ifdef
+    %label not defined
+    \CN@DEBUG{chem}{Defining new compound with key "#1". Name is "#2", 
+      sublabel is "#3".}%
+    \expandafter\def\csname CN@#1@label\endcsname{0}%
+    \expandafter\def\csname CN@#1@name\endcsname{#2}%
+    \ifthenelse{\equal{#3}{-}}{%if no sublabel
+      }{%else
+      \ifthenelse{\equal{#3}{}}{%if no sublabel
+        }{%else
+        \expandafter\def\csname CN@#1@sublabel\endcsname{#3}%
+        }%end if
+      }%end if
+  \else%
+  %previous definition, do nothing
+  \CN@DEBUG{chem}{Attempt to redefine "#1" ignored.}%
+  \fi%
+  }
+
+\DeclareRobustCommand*{\CN@GetFullName}[1]{%
+  %\CN@DEBUG{chem}{entering FindFullName,  finding key "#1" in nameslist "\CN@nameslist"}% 
+  \if\csname CN@#1@name\endcsname\relax%if no name
+    %and
+    \if\csname CN@\CN@MainKey(#1)@name\endcsname\relax%if no mainkey name
+      \CN@WARN{chem}{Attempt to find name for key "#1" failed.}%
+      \setboolean{CN@Warning}{true}%
+      ??%
+    \else%
+      %Use main key name
+      \csname CN@\CN@MainKey(#1)@name\endcsname%
+    \fi%endif
+  \else%
+  %use my own name
+  \csname CN@#1@name\endcsname%
+  \fi%
+  }%
+
+\DeclareRobustCommand*{\CN@GetLabel}[3]{% key, foundbool,
+                                % indexcount
+  \setboolean{#2}{true}%
+  \CN@DEBUG{chem}{GetLabel: looking for '#1'}%
+%  \if\csname CN@#1@label\endcsname\relax %if undef
+%    \CN@WARN{chem}{GetLabel: Error accessing label for '#1'. Possibly 
+%      misspelled or used before it was defined defined.}%
+%    \CN@DEBUG{chem}{GetLabel: MaxLabelIndex=\arabic{CN@MaxLabelIndex}}%
+%    \stepcounter{CN@MaxLabelIndex}%
+%    \expandafter\xdef\csname CN@#1@label\endcsname{\arabic{CN@MaxLabelIndex}}%
+%    \setboolean{#2}{false}%
+%  \fi%
+  \setcounter{#3}{\csname CN@#1@label\endcsname}%
+  \CN@DEBUG{chem}{GetLabel: Label count is \arabic{#3}}%
+  \ifthenelse{\value{#3} = 0}{%
+    \CN@DEBUG{chem}{GetLabel: Found label '\csname CN@#1@label\endcsname' for '#1' is zero.}%
+    \CN@DEBUG{chem}{GetLabel: MaxLabelIndex=\arabic{CN@MaxLabelIndex}}%
+    \stepcounter{CN@MaxLabelIndex}%
+    \CN@DEBUG{chem}{GetLabel: Increment MaxLabelIndex to \arabic{CN@MaxLabelIndex}}%
+    \expandafter\xdef\csname CN@#1@label\endcsname{\arabic{CN@MaxLabelIndex}}%
+    \setcounter{#3}{\csname CN@#1@label\endcsname}%
+    \setboolean{#2}{false}%
+    }{%else
+    %do nothing
+    }%end if def to 0
+%  \fi % end if undef
+  \CN@DEBUG{chem}{GetLabel: Result counter=\arabic{#3}}%
+  }%end def
+
+\DeclareRobustCommand*{\CN@GetSubLabel}[3]{% key, found?, return-element
+                                %\CN@DEBUG{chem}{Entering 
+                                %ScanList, list starts "#1",
+                                %searching for "#2"}%
+  \setboolean{#2}{true}%
+  \CN@DEBUG{chem}{GetSubLabel: looking for sublabel of '#1'}%
+  \ifthenelse{\equal{\CN@MainKey(#1)}{#1}}{%if a mainkey
+    \CN@DEBUG{chem}{GetSubLabel: '#1' is a mainkey .: no sublabel}%
+    \xdef#3{}%
+    }{%else
+    \if\csname CN@#1@sublabel\endcsname\relax%if undef
+       \setboolean{#2}{false}%
+       \CN@DEBUG{chem}{GetSubLabel: Sublabel not previously defined}%
+       \if\csname CN@\CN@MainKey(#1)@sublabel\endcsname\relax%if
+                                                             %mainkey undef
+          \setcounter{CN@SubLabelIndex}{0}%
+       \else%
+          \setcounter{CN@SubLabelIndex}{\csname CN@\CN@MainKey(#1)@sublabel\endcsname}%
+       \fi%
+       \CN@DEBUG{chem}{GetSubLabel: Highest label for these keys is \arabic{CN@SubLabelIndex}.}%
+       \stepcounter{CN@SubLabelIndex}%
+       \expandafter\xdef\csname CN@\CN@MainKey(#1)@sublabel\endcsname{\arabic{CN@SubLabelIndex}}%
+       \expandafter\xdef\csname CN@#1@sublabel\endcsname{\ChemSubCounterStyle{CN@SubLabelIndex}}%
+       \CN@DEBUG{chem}{GetSubLabel: Sublabel now
+           defined as '\csname CN@#1@sublabel\endcsname'}%    
+    \else%
+       \CN@DEBUG{chem}{GetSubLabel: Sublabel previously
+           defined as '\csname CN@#1@sublabel\endcsname'}%    
+    \fi%end if
+    \xdef#3{\csname CN@#1@sublabel\endcsname}%
+    }%end if
+  }% enddef
+  
+\DeclareRobustCommand*{\CN@RealCite}[4]{%key,
+                                       %found, index-counter,
+                                       %sub
+  \CN@DRAFT{#1}%
+  \CN@DEBUG{chem}{In RealCite}%
+  \setcounter{#3}{0}%
+  \setcounter{CN@SubLabelIndex}{0}%
+  \setboolean{#2}{false}%
+  \xdef#4{}%
+  \CN@DEBUG{chem}{Real: calling GetLabel for '\CN@MainKey(#1)', the main 
+    part of '#1'}%
+  \CN@GetLabel{\CN@MainKey(#1)}{#2}{#3}%
+  \CN@DEBUG{chem}{Real: calling GetSubLabel for "#1"}%
+  \CN@GetSubLabel{#1}{CN@ScanList}{#4}%
+  }%end def
+
+\DeclareRobustCommand*{\NoCite}[1]{%
+  \CN@RealCite{#1}{CN@KeyFound}{CN@LabelIndex}{\CN@SubLabel}%
+  }
+
+\DeclareRobustCommand*{\CN@ChemCite}[1]{%
+  %\CN@DEBUG{chem}{in Chemcite}%
+  \CN@RealCite{#1}{CN@KeyFound}{CN@LabelIndex}{\CN@SubLabel}%
+  %\CN@DEBUG{chem}{Cite: called Real}%
+  \ifthenelse{\boolean{CN@KeyFound}}{%
+    %\CN@DEBUG{chem}{Cite: key found, use Short}%
+    \ChemShortLabelStyle{\ChemMainCounterStyle{CN@LabelIndex}}{\CN@SubLabel}%
+    }{%else
+    %\CN@DEBUG{chem}{Cite: key not found, use Long}%
+    \ChemFullLabelStyle{\CN@GetFullName{#1}}{\ChemMainCounterStyle{CN@LabelIndex}}{\CN@SubLabel}%
+    }%
+  }%
+    
+\DeclareRobustCommand*{\CN@ChemFCite}[1]{%
+  %\CN@DEBUG{chem}{in ChemFullCite}%
+  \CN@RealCite{#1}{CN@KeyFound}{CN@LabelIndex}{\CN@SubLabel}%
+  %\CN@DEBUG{chem}{Cite: called Real}%
+  \ChemFullLabelStyle{\CN@GetFullName{#1}}{\ChemMainCounterStyle{CN@LabelIndex}}{\CN@SubLabel}%
+  }%
+    
+\DeclareRobustCommand*{\CN@ChemSCite}[1]{%
+  %\CN@DEBUG{chem}{in ChemShortCite}%
+  \CN@RealCite{#1}{CN@KeyFound}{CN@LabelIndex}{\CN@SubLabel}%
+  %\CN@DEBUG{chem}{SCite: called Real}%
+  \ChemShortLabelStyle{\ChemMainCounterStyle{CN@LabelIndex}}{\CN@SubLabel}%
+  }%
+
+\DeclareRobustCommand*{\CN@ChemMFCite}[1]{%
+  %\CN@DEBUG{chem}{in ChemMainFullCite}%
+  \CN@RealCite{\CN@MainKey(#1)}{CN@KeyFound}{CN@LabelIndex}{\CN@SubLabel}%
+  %\CN@DEBUG{chem}{Cite: called Real}%
+  \ChemFullLabelStyle{\CN@GetFullName{\CN@MainKey(#1)}}{\ChemMainCounterStyle{CN@LabelIndex}}{\CN@SubLabel}%
+  }%
+    
+\DeclareRobustCommand*{\CN@ChemMSCite}[1]{%
+  %\CN@DEBUG{chem}{in ChemMainShortCite}%
+  \CN@RealCite{\CN@MainKey{#1}}{CN@KeyFound}{CN@LabelIndex}{\CN@SubLabel}%
+  %\CN@DEBUG{chem}{SCite: called Real}%
+  \ChemShortLabelStyle{\ChemMainCounterStyle{CN@LabelIndex}}{\CN@SubLabel}%
+  }%
+
+\DeclareRobustCommand*{\CN@ChemCiteStar}[1]{%
+  %\CN@DEBUG{chem}{in Chemcite}%
+  \write\@auxout{\string\NoCite{#1}}\CN@ChemCite{#1}%
+}
+
+\DeclareRobustCommand*{\CN@ChemFCiteStar}[1]{%
+  %\CN@DEBUG{chem}{in ChemFullCite}%
+  \write\@auxout{\string\NoCite{#1}}\CN@ChemFCite{#1}%
+}%
+    
+\DeclareRobustCommand*{\CN@ChemSCiteStar}[1]{%
+  %\CN@DEBUG{chem}{in ChemShortCite}%
+  \write\@auxout{\string\NoCite{#1}}\CN@ChemSCite{#1}%
+  }%
+
+\DeclareRobustCommand*{\CN@ChemMFCiteStar}[1]{%
+  %\CN@DEBUG{chem}{in ChemMainFullCite}%
+  \write\@auxout{\string\NoCite{#1}}\CN@ChemMFCite{#1}%
+  }%
+    
+\DeclareRobustCommand*{\CN@ChemMSCiteStar}[1]{%
+  %\CN@DEBUG{chem}{in ChemMainShortCite}%
+  \write\@auxout{\string\NoCite{#1}}\CN@ChemMSCite{#1}%
+  }%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Public Functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\DeclareRobustCommand*{\ChemCite}{%
+  %\CN@DEBUG{chem}{in Chemcite}%
+  \@ifstar{\CN@ChemCiteStar}{\CN@ChemCite}%
+}
+
+\DeclareRobustCommand*{\ChemFCite}{%
+  %\CN@DEBUG{chem}{in ChemFullCite}%
+  \@ifstar{\CN@ChemFCiteStar}{\CN@ChemFCite}%
+}%
+    
+\DeclareRobustCommand*{\ChemSCite}{%
+  %\CN@DEBUG{chem}{in ChemShortCite}%
+  \@ifstar{\CN@ChemSCiteStar}{\CN@ChemSCite}%
+  }%
+
+\DeclareRobustCommand*{\ChemMFCite}{%
+  %\CN@DEBUG{chem}{in ChemMainFullCite}%
+  \@ifstar{\CN@ChemMFCiteStar}{\CN@ChemMFCite}%
+  }%
+    
+\DeclareRobustCommand*{\ChemMSCite}{%
+  %\CN@DEBUG{chem}{in ChemMainShortCite}%
+  \@ifstar{\CN@ChemMSCiteStar}{\CN@ChemMSCite}%
+  }%
+
+\makeatother
