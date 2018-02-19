@@ -384,7 +384,7 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\ChemFullLabelStyle} 
+% \begin{macro}{\ChemFullLabelStyle}
 %   ChemFullLabelStyle is the style that the generated full entity name
 %   and labels appear in. It takes three arguments (1) the fullname, (2)
 %   the label for the key and (3) the label for the sub-key. The default
@@ -406,7 +406,7 @@
 %   citations appear in. It takes two arguments (1) the label for the
 %   key and (2) the label for the sub-key. The default implementation
 %   uses the ChemLabelStyle to format the label.
-%    \begin{macrocode} 
+%    \begin{macrocode}
 \DeclareRobustCommand*{\ChemShortLabelStyle}[2]{%
   \ifthenelse{\equal{}{#2}}{%
     \ChemLabelStyle{#1}%
@@ -420,8 +420,8 @@
 % \begin{macro}{\ChemMainCounterStyle}
 %  Converts the counter used for the key label into a number or
 %  letter. The default implementation uses \texttt{\arabic} to generate
-%  a number. 
-%    \begin{macrocode} 
+%  a number.
+%    \begin{macrocode}
 \DeclareRobustCommand*{\ChemMainCounterStyle}[1]{%
   \arabic{#1}}
 %    \end{macrocode}
@@ -430,12 +430,14 @@
 % \begin{macro}{\ChemSubCounterStyle}
 %  Converts the counter used for the sub-key label into a number or
 %  letter. The default implementation uses \texttt{\alph} to generate
-%  a letter. 
+%  a letter.
+%    \begin{macrocode}
 \DeclareRobustCommand*{\ChemSubCounterStyle}[1]{%
   \alph{#1}}
 %    \end{macrocode}
 % \end{macro}
-
+%
+% \begin{macrocode}
 \makeatletter
 %Create option to support dynamic debugging
 \gdef\CN@DEBUG #1#2{}  
@@ -450,7 +452,6 @@
   \gdef\CN@DRAFT #1{$^{[#1]}$}%
   }
 \ProcessOptions
-
 
                                 %\CN@DEBUG{chem}{LabelIndex is the
                                 %number of the index that is output as 
@@ -493,6 +494,8 @@
     %do nothing
     }%end if
   }%end def
+% \end{macrocode}
+%
 
 \DeclareRobustCommand*{\DefineChemical}[3]{%
                                 %\CN@DEBUG{chem}{Entering 
