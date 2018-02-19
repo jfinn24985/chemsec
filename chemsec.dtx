@@ -373,7 +373,33 @@
 % The user controls the output of the citations using ChemLabelStyle,
 % ChemFullLabelStyle ChemShortLabelStyle.
 %
-
+% \subsection{Counters}
+%
+%  Several counters are used for generating the label values.
+%  
+% \begin{itemize}
+%  \item CN\@{}MaxLabelIndex tracks the maximum label index.
+% \end{itemize}
+% \begin{macrocode}
+\makeatletter
+\newcounter{CN@MaxLabelIndex}      
+\setcounter{CN@MaxLabelIndex}{0}
+% \end{macrocode}
+% \begin{itemize}
+%  \item CN\@{}LabelIndex is the number of the current label.
+% \end{itemize}
+% \begin{macrocode}
+\newcounter{CN@LabelIndex}      
+% \end{macrocode}
+% \begin{itemize}
+%   \item CN\@{}SubLabelIndex is the number of the current sub-key label
+% \end{itemize}
+% \begin{macrocode}
+\newcounter{CN@SubLabelIndex}
+% \end{macrocode}
+%
+% \subsection{Output Style Macros}
+%
 % \begin{macro}{\ChemLabelStyle}
 %   ChemLabelStyle formats the label. It takes one argument which is the
 %   label to be formatted. The default implementation formats the label
@@ -437,59 +463,60 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macrocode}
-\makeatletter
-% \end{macrocode}
-%Create option to support dynamic debugging
+%  \begin{macro}{\CN@DEBUG}
+%    Internal macro used to suppress errors and warnings when not debugging.
 % \begin{macrocode}
 \gdef\CN@DEBUG #1#2{}  
+%    \end{macrocode}
+% \end{macro}
+%  \begin{macro}{\CN@WARN}
+%    Internal macro used to display errors and warnings as information
+%    messages when not debugging.
+% \begin{macrocode}
 \gdef\CN@WARN #1#2{\PackageInfo{#1}{#2}}  
+%    \end{macrocode}
+% \end{macro}
+%  \begin{macro}{\CN@DRAFT}
+%    Internal macro used to suppress draft only output when not in draft mode.
+% \begin{macrocode}
 \gdef\CN@DRAFT #1{}
-\DeclareOption{debug}{%
-  \gdef\CN@DEBUG #1#2{\PackageInfo{#1}{#2}}%
-  \gdef\CN@WARN #1#2{\PackageWarning{#1}{#2}}%
-  \gdef\CN@DRAFT #1{$^{[#1]}$}%
-  }
-\DeclareOption{draft}{%
-  \gdef\CN@DRAFT #1{$^{[#1]}$}%
-  }
-\ProcessOptions
-
-                                %\CN@DEBUG{chem}{LabelIndex is the
-                                %number of the index that is output as 
-                                %the label}%
-\newcounter{CN@MaxLabelIndex}      
-\setcounter{CN@MaxLabelIndex}{0}
-\newcounter{CN@LabelIndex}      
-\newcounter{CN@SubLabelIndex}      
-
-% \end{macrocode}
-%some default values for when macro gets called without an argument
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsection{Internal Variables}
+%
+% \begin{itemize}
+% \item CN\@{}\@{}label is a dummy value used when no label is found for
+%   a particular key.
 % \begin{macrocode}
 \expandafter\def\csname CN@@label\endcsname{999}
+% \end{macrocode}
+% \item CN\@{}\@{}name is a dummy name used when no name is found for a
+%   particular key.
+% \begin{macrocode}
 \expandafter\def\csname CN@@name\endcsname{X}
+% \end{macrocode}
+% \item CN\@{}\@{}sublabel is a dummy sublabel used when no label is
+%   found for a particular sub-key.
+% \begin{macrocode}
 \expandafter\def\csname CN@@sublabel\endcsname{X}
-                                %\CN@DEBUG{chem}{KeyFound is a
-                                %boolean to signal whether the key was 
-                                %found in the keylist. Failure to be
-                                %found indicates that this is the
-                                %first time this key was cited}% 
+% \end{macrocode}
+% \item CN\@{}\@{}KeyFound is a boolean to signal whether the key was
+%   found in the keylist. Failure to be found indicates that this is the
+%   first time this key was cited.
+% \begin{macrocode}
 \newboolean{CN@KeyFound}
-
-                                %\CN@DEBUG{chem}{ScanList is a
-                                %boolean to signal whether the key
-                                %was found in the last loop of the
-                                %list scan.}% 
+% \end{macrocode}
+% \item CN\@{}\@{}ScanList is a boolean to signal whether the key was
+%   found in the last loop of the list scan.
+% \begin{macrocode}
 \newboolean{CN@ScanList}
+% \end{macrocode}
+% \item CN\@{}\@{}Warning is a boolean that signals that the document
+%   has possible incorrect labels and needs to be reprocessed.
+% \begin{macrocode}
 \newboolean{CN@Warning}
 \setboolean{CN@Warning}{false}
-
-                                %\CN@DEBUG{chem}{MainKey splits a
-                                %key that is in the format Main!Sub,
-                                %returning only the Main part}%
-\gdef\CN@mainpartofkey (#1!#2){#1}
-\gdef\CN@MainKey (#1){\CN@mainpartofkey(#1!)}%
-
 \AtEndDocument{%
   \ifthenelse{\boolean{CN@Warning}}{%
     \PackageWarningNoLine{chem}{Chem-label(s) were used before they were defined.
@@ -499,16 +526,53 @@
     }%end if
   }%end def
 % \end{macrocode}
+% \end{itemize}
 %
+% \subsection{Internal Macros}
 %
+%  The package creates a virtual mapping of keys to a name and a
+%  label. The key is stored as Main!Sub if the key has a sub-key. This
+%  mapping is stored into the \texttt{aux} file where it is read at the
+%  start of each document processing.  If the mapping is altered during
+%  processing the user gets a warning to reprocess the document, similar
+%  to other automatically created indices.
+%
+% \begin{macro}{\CN@@mainpartofkey} 
+%   Splits the internal representation of a key as Main!Sub,
+%   returning only the Main part.
+% \begin{macrocode}
+\gdef\CN@mainpartofkey (#1!#2){#1}
+% \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\CN@@MainKey}
+%   Acts as a driver macro for \texttt{CN\@{}\@{}mainpartofkey} macro.
+% \begin{macrocode}
+\gdef\CN@MainKey (#1){\CN@mainpartofkey(#1!)}%
+% \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\DefineChemical}
+%   Associate a chemical name with a key and label.  This does not
+%   output any text in the document.  It allows the user to define a label
+%   for a key. There is no check that the label is unique. 
 % \begin{macrocode}
 \DeclareRobustCommand*{\DefineChemical}[3]{%
-                                %\CN@DEBUG{chem}{Entering 
-                                %DefineChemical}%
   \CN@definenewchemical{#1}{#2}{#3}%
   \write\@auxout{\string\CN@definenewchemical{#1}{#2}{#3}}%
   }%end def
-
+% \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\CN@definenewchemical}
+%   Associate a chemical name with a key and label. The instances of
+%   this macro written in the \texttt{aux} file are what define the
+%   current value of labels. There is a check to make sure the key is
+%   unique but there is no check that the label is unique.
+%
+%   This macro creates the table of key name and labels that is used
+%   by the other macros to generate output in the document.
+% \begin{macrocode}
 \DeclareRobustCommand*{\CN@definenewchemical}[3]{%key, name, label
   %check for previous definition of name
   \if\csname CN@#1@label\endcsname\relax%ifdef
@@ -529,7 +593,15 @@
   \CN@DEBUG{chem}{Attempt to redefine "#1" ignored.}%
   \fi%
   }
-
+% \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\CN@GetFullName}
+%   Check that a name is defined for the given key. If no name
+%   exists then check using only the Main part of a Main!Sub key.
+%   If still no name is found then output '??' and print an error
+%   message to the processing log.
+% \begin{macrocode}
 \DeclareRobustCommand*{\CN@GetFullName}[1]{%
   %\CN@DEBUG{chem}{entering FindFullName,  finding key "#1" in nameslist "\CN@nameslist"}% 
   \if\csname CN@#1@name\endcsname\relax%if no name
@@ -547,21 +619,27 @@
   \csname CN@#1@name\endcsname%
   \fi%
   }%
-
+% \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\CN@GetLabel}
+%   Check that a label is defined for the given key. If no label exists
+%   then check using only the Main part of a Main!Sub key.  If still no
+%   label is found then output value of the current
+%   \texttt{CN\@{}MaxLabelIndex}.
+% \begin{macrocode}
 \DeclareRobustCommand*{\CN@GetLabel}[3]{% key, foundbool,
                                 % indexcount
   \setboolean{#2}{true}%
   \CN@DEBUG{chem}{GetLabel: looking for '#1'}%
-% \end{macrocode}
-%  \if\csname CN@#1@label\endcsname\relax %if undef
-%    \CN@WARN{chem}{GetLabel: Error accessing label for '#1'. Possibly 
-%      misspelled or used before it was defined defined.}%
-%    \CN@DEBUG{chem}{GetLabel: MaxLabelIndex=\arabic{CN@MaxLabelIndex}}%
-%    \stepcounter{CN@MaxLabelIndex}%
-%    \expandafter\xdef\csname CN@#1@label\endcsname{\arabic{CN@MaxLabelIndex}}%
-%    \setboolean{#2}{false}%
-%  \fi%
-% \begin{macrocode}
+  %  \if\csname CN@#1@label\endcsname\relax %if undef
+  %    \CN@WARN{chem}{GetLabel: Error accessing label for '#1'. Possibly 
+  %      misspelled or used before it was defined defined.}%
+  %    \CN@DEBUG{chem}{GetLabel: MaxLabelIndex=\arabic{CN@MaxLabelIndex}}%
+  %    \stepcounter{CN@MaxLabelIndex}%
+  %    \expandafter\xdef\csname CN@#1@label\endcsname{\arabic{CN@MaxLabelIndex}}%
+  %    \setboolean{#2}{false}%
+  %  \fi%
   \setcounter{#3}{\csname CN@#1@label\endcsname}%
   \CN@DEBUG{chem}{GetLabel: Label count is \arabic{#3}}%
   \ifthenelse{\value{#3} = 0}{%
@@ -575,14 +653,18 @@
     }{%else
     %do nothing
     }%end if def to 0
-%  \fi % end if undef
+  %  \fi % end if undef
   \CN@DEBUG{chem}{GetLabel: Result counter=\arabic{#3}}%
   }%end def
-
+% \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\CN@GetSubLabel}
+%   Check that a sublabel is defined for the given key. If no sublabel
+%   exists then try and calculate a value based on the number of keys
+%   having the same Main part of the Main!Sub key.
+% \begin{macrocode}
 \DeclareRobustCommand*{\CN@GetSubLabel}[3]{% key, found?, return-element
-                                %\CN@DEBUG{chem}{Entering 
-                                %ScanList, list starts "#1",
-                                %searching for "#2"}%
   \setboolean{#2}{true}%
   \CN@DEBUG{chem}{GetSubLabel: looking for sublabel of '#1'}%
   \ifthenelse{\equal{\CN@MainKey(#1)}{#1}}{%if a mainkey
@@ -611,7 +693,12 @@
     \xdef#3{\csname CN@#1@sublabel\endcsname}%
     }%end if
   }% enddef
-  
+% \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\CN@RealCite}
+%   Search for the label and sublabel for a given key.
+% \begin{macrocode}
 \DeclareRobustCommand*{\CN@RealCite}[4]{%key,
                                        %found, index-counter,
                                        %sub
@@ -627,11 +714,24 @@
   \CN@DEBUG{chem}{Real: calling GetSubLabel for "#1"}%
   \CN@GetSubLabel{#1}{CN@ScanList}{#4}%
   }%end def
-
+% \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\NoCite}
+%   Search for the label and sublabel for a given key without producing
+%   any output.
+% \begin{macrocode}
 \DeclareRobustCommand*{\NoCite}[1]{%
   \CN@RealCite{#1}{CN@KeyFound}{CN@LabelIndex}{\CN@SubLabel}%
   }
-
+% \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\CN@ChemCite}
+%   Output name, label and sublabel for a given key. The name is output
+%   only if \texttt{CN\@{}KeyFound} is \texttt{false} which occurs the
+%   first time a key is cited.
+% \begin{macrocode}
 \DeclareRobustCommand*{\CN@ChemCite}[1]{%
   %\CN@DEBUG{chem}{in Chemcite}%
   \CN@RealCite{#1}{CN@KeyFound}{CN@LabelIndex}{\CN@SubLabel}%
@@ -644,91 +744,179 @@
     \ChemFullLabelStyle{\CN@GetFullName{#1}}{\ChemMainCounterStyle{CN@LabelIndex}}{\CN@SubLabel}%
     }%
   }%
-    
+% \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\CN@ChemFCite}
+%   Output name, label and sublabel for a given key. The name is always output.
+% \begin{macrocode}
 \DeclareRobustCommand*{\CN@ChemFCite}[1]{%
   %\CN@DEBUG{chem}{in ChemFullCite}%
   \CN@RealCite{#1}{CN@KeyFound}{CN@LabelIndex}{\CN@SubLabel}%
   %\CN@DEBUG{chem}{Cite: called Real}%
   \ChemFullLabelStyle{\CN@GetFullName{#1}}{\ChemMainCounterStyle{CN@LabelIndex}}{\CN@SubLabel}%
   }%
-    
+ % \end{macrocode}
+% \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\CN@ChemSCite}
+%   Output label and sublabel for a given key. The name is never output.
+% \begin{macrocode}
 \DeclareRobustCommand*{\CN@ChemSCite}[1]{%
   %\CN@DEBUG{chem}{in ChemShortCite}%
   \CN@RealCite{#1}{CN@KeyFound}{CN@LabelIndex}{\CN@SubLabel}%
   %\CN@DEBUG{chem}{SCite: called Real}%
   \ChemShortLabelStyle{\ChemMainCounterStyle{CN@LabelIndex}}{\CN@SubLabel}%
   }%
-
+% \end{macro}
+%
+% \begin{macro}{\CN@ChemMFCite}
+%   Output name associated with the Main part of the Main!Sub key as
+%   well as the label and sublabel.
+% \begin{macrocode}
 \DeclareRobustCommand*{\CN@ChemMFCite}[1]{%
   %\CN@DEBUG{chem}{in ChemMainFullCite}%
   \CN@RealCite{\CN@MainKey(#1)}{CN@KeyFound}{CN@LabelIndex}{\CN@SubLabel}%
   %\CN@DEBUG{chem}{Cite: called Real}%
   \ChemFullLabelStyle{\CN@GetFullName{\CN@MainKey(#1)}}{\ChemMainCounterStyle{CN@LabelIndex}}{\CN@SubLabel}%
   }%
-    
+% \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\CN@ChemMSCite}
+%   Output the label for the Main part of the Main!Sub key.
+% \begin{macrocode}
 \DeclareRobustCommand*{\CN@ChemMSCite}[1]{%
   %\CN@DEBUG{chem}{in ChemMainShortCite}%
   \CN@RealCite{\CN@MainKey{#1}}{CN@KeyFound}{CN@LabelIndex}{\CN@SubLabel}%
   %\CN@DEBUG{chem}{SCite: called Real}%
   \ChemShortLabelStyle{\ChemMainCounterStyle{CN@LabelIndex}}{\CN@SubLabel}%
   }%
-
+% \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\CN@ChemCiteStar}
+%   Call \\NoCite before \\CN\@{}ChemCite.
+% \begin{macrocode}
 \DeclareRobustCommand*{\CN@ChemCiteStar}[1]{%
   %\CN@DEBUG{chem}{in Chemcite}%
   \write\@auxout{\string\NoCite{#1}}\CN@ChemCite{#1}%
 }
-
+% \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\CN@ChemFCiteStar}
+%   Call \\NoCite before \\CN\@{}ChemFCite.
+% \begin{macrocode}
 \DeclareRobustCommand*{\CN@ChemFCiteStar}[1]{%
   %\CN@DEBUG{chem}{in ChemFullCite}%
   \write\@auxout{\string\NoCite{#1}}\CN@ChemFCite{#1}%
 }%
-    
+% \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\CN@ChemSCiteStar}
+%   Call \\NoCite before \\CN\@{}ChemSCite.
+% \begin{macrocode}
 \DeclareRobustCommand*{\CN@ChemSCiteStar}[1]{%
   %\CN@DEBUG{chem}{in ChemShortCite}%
   \write\@auxout{\string\NoCite{#1}}\CN@ChemSCite{#1}%
   }%
-
+% \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\CN@ChemMFCiteStar}
+%   Call \\NoCite before \\CN\@{}ChemMFCite.
+% \begin{macrocode}
 \DeclareRobustCommand*{\CN@ChemMFCiteStar}[1]{%
   %\CN@DEBUG{chem}{in ChemMainFullCite}%
   \write\@auxout{\string\NoCite{#1}}\CN@ChemMFCite{#1}%
   }%
-    
+% \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\CN@ChemMSCiteStar}
+%   Call \\NoCite before \\CN\@{}ChemMSCite.
+% \begin{macrocode}
 \DeclareRobustCommand*{\CN@ChemMSCiteStar}[1]{%
   %\CN@DEBUG{chem}{in ChemMainShortCite}%
   \write\@auxout{\string\NoCite{#1}}\CN@ChemMSCite{#1}%
   }%
-
 % \end{macrocode}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Public Functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \begin{macrocode}
-
+% \end{macro}
+%
+% \begin{macro}{\ChemCite}
+%  Delegate to CN\@{}ChemCiteStar or CN\@{}ChemCite depending on whether '*'
+%  was used.
+%    \begin{macrocode}
 \DeclareRobustCommand*{\ChemCite}{%
-  %\CN@DEBUG{chem}{in Chemcite}%
   \@ifstar{\CN@ChemCiteStar}{\CN@ChemCite}%
 }
-
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\ChemFCite}
+%  Delegate to CN\@{}ChemFCiteStar or CN\@{}ChemFCite depending on whether '*'
+%  was used.
+%    \begin{macrocode}
 \DeclareRobustCommand*{\ChemFCite}{%
-  %\CN@DEBUG{chem}{in ChemFullCite}%
   \@ifstar{\CN@ChemFCiteStar}{\CN@ChemFCite}%
 }%
-    
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\ChemSCite}
+%  Delegate to CN\@{}ChemSCiteStar or CN\@{}ChemSCite depending on whether '*'
+%  was used.
+%    \begin{macrocode}    
 \DeclareRobustCommand*{\ChemSCite}{%
-  %\CN@DEBUG{chem}{in ChemShortCite}%
   \@ifstar{\CN@ChemSCiteStar}{\CN@ChemSCite}%
   }%
-
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\ChemMFCite}
+%  Delegate to CN\@{}ChemMFCiteStar or CN\@{}ChemMFCite depending on whether '*'
+%  was used.
+%    \begin{macrocode}
 \DeclareRobustCommand*{\ChemMFCite}{%
-  %\CN@DEBUG{chem}{in ChemMainFullCite}%
   \@ifstar{\CN@ChemMFCiteStar}{\CN@ChemMFCite}%
   }%
-    
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\ChemMSCite}
+%   Delegate to CN\@{}ChemMSCiteStar or CN\@{}ChemMSCite depending on
+%   whether '*' was used.
+%    \begin{macrocode}    
 \DeclareRobustCommand*{\ChemMSCite}{%
-  %\CN@DEBUG{chem}{in ChemMainShortCite}%
   \@ifstar{\CN@ChemMSCiteStar}{\CN@ChemMSCite}%
   }%
+% \end{macrocode}
+%  \section{Options}
+%    The package has several options to help with using the package.
+%
+%  \begin{itemize}
+%  \item  The \texttt{debug} option generates more error and warning messages
+%    as well as outputing draft data.
+% \begin{macrocode}
+\DeclareOption{debug}{%
+  \gdef\CN@DEBUG #1#2{\PackageInfo{#1}{#2}}%
+  \gdef\CN@WARN #1#2{\PackageWarning{#1}{#2}}%
+  \gdef\CN@DRAFT #1{$^{[#1]}$}%
+  }
+%  
+%  \item The \texttt{draft} option outputs some draft data.
+%  \end{itemize}
+% \begin{macrocode}
+\DeclareOption{draft}{%
+  \gdef\CN@DRAFT #1{$^{[#1]}$}%
+  }
+\ProcessOptions
 
+% \end{macrocode}
+% \begin{macrocode} 
 \makeatother
 % \end{macrocode}
 %
