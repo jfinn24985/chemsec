@@ -18,12 +18,12 @@
 %<*driver>
 \ProvidesFile{chemsec.dtx}
 %</driver>
-%<package>\NeedsTeXFormat{LaTeX2e}[2005/12/01]
+%<package>\NeedsTeXFormat{LaTeX2e}[1994/06/01]
 %<package>\ProvidesPackage{chemsec}
 %<*package>
     [2018/02/01 v1.2 .dtx chemsec file]
 %</package>
-%
+%<package>\RequirePackage{ifthen}[1994/06/01]
 %<*driver>
 \documentclass{ltxdoc}
 \usepackage{chemsec}[2018/02/01]
@@ -374,9 +374,6 @@
 % ChemFullLabelStyle ChemShortLabelStyle.
 %
 
-\NeedsTeXFormat{LaTeX2e}[1994/06/01] 
-\ProvidesPackage{chem}[1999/08/18, $Revision: 1.1.1.1 $]
-\RequirePackage{ifthen}[1994/06/01]
 
                                 %\CN@DEBUG{chem}{ChemLabelStyle is
                                 %the style that the generated labels
