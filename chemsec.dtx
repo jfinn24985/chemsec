@@ -154,12 +154,10 @@
 % that might produce entity names at the start of a sentence.
 % 
 % 
-% 
-% Macros:
-% 
-% : \consecLabelStyle
-%   The style for the labels.
-% 
+%
+% \section{Usage}
+%
+% Put text here.
 % : \consecCite
 %   Output label and optionally the full name
 % 
@@ -226,6 +224,20 @@
 % (Unused labels from this file generate a warning but do not remove
 % entry, even is not defined. In this way the file can be used liek a
 % bibtex data file.
+% 
+% \subsection{Style macros}
+%
+% Style macros can be overridden by the user to control the style
+% of the label and accompanying text.
+% 
+% \DescribeMacro{\ChemsecLabelStyle}
+%   Internal macro that formats a label when it appears without text.
+% 
+% \DescribeMacro{\ChemsecFullLabelStyle}
+%   Internal macro that formats a label and its full entry text.
+% 
+% \DescribeMacro{\ChemsecShortLabelStyle}
+%   Internal macro that formats a label and its generic entry text.
 % 
 % 
 % 
