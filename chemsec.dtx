@@ -73,7 +73,7 @@
 % \section{Abstract}
 % 
 % A cross-reference system designed for an arbitrary set of items.
-% Generates a document-order set of  consecutive number labels that can
+% Generates a document-order set of consecutive number labels that can
 % be cross-referenced anywhere in the document. For example, this
 % could be used for labelling chemical structures in a scientific
 % document.
@@ -153,11 +153,27 @@
 % non-capital letter. The only solution is to avoid using the macros
 % that might produce entity names at the start of a sentence.
 % 
-% 
-%
 % \section{Usage}
 %
-% Put text here.
+% You identify each entity that you want labelled with a unique key and
+% an optional sub-key. In a chemistry document an entity would be a
+% chemical structure, the key represents the base structure and the
+% sub-key might represent a substituent or conformation. Then you
+% replace each use of an entity in the document with one of the
+% \texttt{ChemsecCite} macros, optionally one of these calls can include
+% the full name of the entity. When the document is processed each call
+% to the macros will be replaced with a label and optionally the name of
+% each entity. For example using the base \texttt{ChemsecCite} macro
+% will display the entity name and label at the first
+% \texttt{ChemsecCite} macro encountered and just the label at
+% subsequent calls. Different version of the \texttt{ChemsecCite} macro
+% allows control over what text is displayed.
+%
+% You can output a simple table listing all the cited entities using
+% the \texttt{ChemsecEntityTable}. The table is useful during document
+% preparation as a way display the names along with their key and
+% sub-keys. 
+%
 % : \consecCite
 %   Output label and optionally the full name
 % 
@@ -197,10 +213,10 @@
 %   Text used in \consecEntityTable for entity name column
 % 
 % : \consecEntityLabelTitle
-%   Text usef in \consecEntityTable for label column
+%   Text used in \consecEntityTable for label column
 % 
 % : \consecEntityKeyTitle
-%   Text usef in \consecEntityTable for the optional key column
+%   Text used in \consecEntityTable for the optional key column
 % 
 % 
 % Package options:
