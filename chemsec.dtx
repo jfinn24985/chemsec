@@ -401,27 +401,6 @@
 %
 % \StopEventually{}
 %
-% \subsection{Counters}
-%
-% Several counters are used internally for generating the label
-% values. They should not be manually altered by the user.
-%  
-% \begin{itemize}
-% \item |CN@MaxLabelIndex| tracks the maximum label index.
-%    \begin{macrocode}
-\makeatletter \newcounter{CN@MaxLabelIndex}
-\setcounter{CN@MaxLabelIndex}{0}
-%    \end{macrocode}
-% \item |CN@LabelIndex| is the number of the current label.
-%    \begin{macrocode}
-\newcounter{CN@LabelIndex}
-%    \end{macrocode}
-% \item |CN@SubLabelIndex| is the number of the current sub-key label
-%    \begin{macrocode}
-\newcounter{CN@SubLabelIndex}
-%    \end{macrocode}
-% \end{itemize}
-%
 % \subsection{Output Style Macros}
 %
 % \begin{macro}{\ChemLabelStyle} \marg{label} The default implementation
@@ -497,6 +476,7 @@
 %    debugging.  This is redefined if the |debug| package option is used
 %    to output debugging messages in the processing log.
 %    \begin{macrocode}
+\makeatletter
 \gdef\CN@DEBUG #1#2{}
 %    \end{macrocode}
 % \end{macro}
@@ -544,6 +524,27 @@
 %    \end{macrocode}
 %  \end{itemize}
 %
+% \subsection{Counters}
+%
+% Several counters are used internally for generating the label
+% values. They should not be manually altered by the user.
+%  
+% \begin{itemize}
+% \item |CN@MaxLabelIndex| tracks the maximum label index.
+%    \begin{macrocode}
+\newcounter{CN@MaxLabelIndex}
+\setcounter{CN@MaxLabelIndex}{0}
+%    \end{macrocode}
+% \item |CN@LabelIndex| is the number of the current label.
+%    \begin{macrocode}
+\newcounter{CN@LabelIndex}
+%    \end{macrocode}
+% \item |CN@SubLabelIndex| is the number of the current sub-key label
+%    \begin{macrocode}
+\newcounter{CN@SubLabelIndex}
+%    \end{macrocode}
+% \end{itemize}
+%
 % \subsection{Internal Variables}
 %
 % \begin{itemize}
@@ -578,7 +579,9 @@
 %   possible incorrect labels and needs to be reprocessed. This is
 %   similar to other places where latex automatically generates labels.
 %    \begin{macrocode}
-\newboolean{CN@Warning} \setboolean{CN@Warning}{false} \AtEndDocument{%
+\newboolean{CN@Warning}
+\setboolean{CN@Warning}{false}
+\AtEndDocument{%
   \ifthenelse{\boolean{CN@Warning}}{%
     \PackageWarningNoLine{chem}{Chem-label(s) were used before they were
       defined.  Rerun to get chem-labels right.}%
@@ -655,8 +658,6 @@
 %   processing log.
 %    \begin{macrocode}
 \DeclareRobustCommand*{\CN@GetFullName}[1]{%
-  % \CN@DEBUG{chem}{entering FindFullName, finding key "#1" in nameslist
-  % "\CN@nameslist"}%
   \if\csname CN@#1@name\endcsname\relax%if no name
   % and
   \if\csname CN@\CN@MainKey(#1)@name\endcsname\relax%if no mainkey name
@@ -690,21 +691,18 @@
   % misspelled or used before it was defined defined.}%
   % \CN@DEBUG{chem}{GetLabel: MaxLabelIndex=\arabic{CN@MaxLabelIndex}}%
   % \stepcounter{CN@MaxLabelIndex}%
-  % \expandafter\xdef\csname
+  % \expandafter\xdef\csname%
   % CN@#1@label\endcsname{\arabic{CN@MaxLabelIndex}}%
   % \setboolean{#2}{false}%
   % \fi%
   \setcounter{#3}{\csname CN@#1@label\endcsname}%
   \CN@DEBUG{chem}{GetLabel: Label count is \arabic{#3}}%
   \ifthenelse{\value{#3} = 0}{%
-    \CN@DEBUG{chem}{GetLabel: Found label '\csname
-      CN@#1@label\endcsname' for '#1' is zero.}%
+    \CN@DEBUG{chem}{GetLabel: Found label '\csname CN@#1@label\endcsname' for '#1' is zero.}%
     \CN@DEBUG{chem}{GetLabel: MaxLabelIndex=\arabic{CN@MaxLabelIndex}}%
     \stepcounter{CN@MaxLabelIndex}%
-    \CN@DEBUG{chem}{GetLabel: Increment MaxLabelIndex to
-      \arabic{CN@MaxLabelIndex}}%
-    \expandafter\xdef\csname
-    CN@#1@label\endcsname{\arabic{CN@MaxLabelIndex}}%
+    \CN@DEBUG{chem}{GetLabel: Increment MaxLabelIndex to \arabic{CN@MaxLabelIndex}}%
+    \expandafter\xdef\csname CN@#1@label\endcsname{\arabic{CN@MaxLabelIndex}}%
     \setcounter{#3}{\csname CN@#1@label\endcsname}%
     \setboolean{#2}{false}%
   }{%else
@@ -741,15 +739,11 @@
     \CN@DEBUG{chem}{GetSubLabel: Highest label for these keys is
       \arabic{CN@SubLabelIndex}.}%
     \stepcounter{CN@SubLabelIndex}%
-    \expandafter\xdef\csname
-    CN@\CN@MainKey(#1)@sublabel\endcsname{\arabic{CN@SubLabelIndex}}%
-    \expandafter\xdef\csname
-    CN@#1@sublabel\endcsname{\ChemSubCounterStyle{CN@SubLabelIndex}}%
-    \CN@DEBUG{chem}{GetSubLabel: Sublabel now defined as '\csname
-      CN@#1@sublabel\endcsname'}%
+    \expandafter\xdef\csname CN@\CN@MainKey(#1)@sublabel\endcsname{\arabic{CN@SubLabelIndex}}%
+    \expandafter\xdef\csname CN@#1@sublabel\endcsname{\ChemSubCounterStyle{CN@SubLabelIndex}}%
+    \CN@DEBUG{chem}{GetSubLabel: Sublabel now defined as '\csname CN@#1@sublabel\endcsname'}%
     \else%
-    \CN@DEBUG{chem}{GetSubLabel: Sublabel previously defined as '\csname
-      CN@#1@sublabel\endcsname'}%
+    \CN@DEBUG{chem}{GetSubLabel: Sublabel previously defined as '\csname CN@#1@sublabel\endcsname'}%
     \fi%end if
     \xdef#3{\csname CN@#1@sublabel\endcsname}%
   }%end if
@@ -959,9 +953,6 @@
 }%
 %    \end{macrocode}
 % \end{macro}
-%    \begin{macrocode}
-\makeatother
-%    \end{macrocode}
 %
 % \begin{macro}{\DefineChemical}\marg{main!sub key}\marg{name}\marg{label}
 %   Associate a key with a chemical name and sub-label by inserting a
@@ -973,6 +964,9 @@
 }%end def
 %    \end{macrocode}
 % \end{macro}
+%    \begin{macrocode}
+\makeatother
+%    \end{macrocode}
 %
 % \Finale
 \endinput
