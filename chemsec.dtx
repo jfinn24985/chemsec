@@ -78,83 +78,52 @@
 % could be used for labelling chemical structures in a scientific
 % document.
 %
-% 
-% \section{Design brief}
-% 
-% The package should be able to consistently label an entity throughout
-% the document based on a user-defined key. The label can be either a
-% consecutive number or a user-defined label. These labels can be
-% combined with a sublabel, which can also be consecutive or
-% user-defined.
-% 
-% When sub-labels are used a user-supplied key and sub-key are
-% required. Any entity associated with the key without a sub-key is
-% considered to be a generic entity for any entities defined with the
-% same key and a sub-key. A chemistry example of this is ``methyl
-% acetate (1a)'' and ``ethyl acetate (1b)'' being specific examples of
-% ``acetic acid ester (1)''.
-% 
-% \subsection{Limits}
-% 
-% \begin{itemize}
-% \item The package can provide consecutive labels or user-defined
-%   labels but not both.
-% 
-% \item Unless user-defined labels are used, consecutive labels are
-%   numeric for labels and alphabetic for sub-labels.
-% 
-% \item The package can provide only a single set of consecutive labels.
-% 
-% \item The package can provide consecutive sub-labels or user-defined
-%   sub-labels but not both for each label.
-% \end{itemize}
-% 
-% \subsection{Actions}
-% 
-% \begin{itemize}
-% \item The first time the XXX, YYY macros appear in the latex document
-%   with a given key is where the consecutive number label for the key
-%   is defined (unless user-defined label are being used).
-% 
-% \item Using macros XXX, YYY provides the label without defining the
-%   consecutive number label. This allows the label to appear, for
-%   example in a table, abstract or figure, before the desired defining
-%   location of the label.
-% 
-% \item The names of entities can be defined anywhere in the document
-%   and appear in a user-controlled manner.
-% 
-% \item The basic macros typeset the entity name and label at the first
-%   defining reference position and only the label in other places.
-% 
-% \item A range of advanced macros allow greater control over the
-%   display of the entity name and label.  For example the user can
-%   output a label and sub-label but use the name of the generic entity.
-%   A chemistry example of this with ``ethyl acetate (1b)'' and its
-%   generic entity ``acetic acid ester (1)'' appearing as ``\dots{}gives
-%   the second acetic acid ester (1b)\dots{}''.
-% 
-% \item The label will be typeset in a particular, user configurable,
-%   style. The label should be consistently formatted, even in
-%   math-mode.
-% 
-% \item The label can be used transparently by other packages. For
-%   example it can be used with the \textsf{psfrag} package to inject
-%   the correct labels into figures at documentation preparation time
-%   rather than having to recreate new figures whenever the label
-%   numbering changes.
-% 
-% \end{itemize}
-% 
-% \subsection{Known bugs}
-% 
-% The package does not currently detect when output occurs at the
-% beginning of a sentence and automatically capitalise the first
-% non-capital letter. The only solution is to avoid using the macros
-% that might produce entity names at the start of a sentence.
-% 
 % \section{Usage}
 %
+% This package solves the problem of providing a sequence of labels to
+% represent entities in a document. The motivating example is numeric
+% labels for chemical structures in a scientific document. These labels
+% share similar features to numeric bibliographic reference styles, both
+% use numbers to represent something, the numbers form a single sequence
+% starting from one and incrementing as references appear in the
+% document. Furthermore a bibliographic reference can appear in multiple
+% places in the text yet retains a single numeric label. For chemical
+% structures we want the labels to be numeric and form a sequence.
+% However there are a couple of differences to a bibliography. Firstly
+% the name of the chemical structure generally appears where it is first
+% used in the document along with its label rather than in a
+% bibliography or footnote. Secondly it is common to use a single
+% numeric label for closely related structures, appending a sublabel to
+% denote individual structures. For example we might have ``\textsf{methyl
+% acetate (\textbf{1a})}'' and ``\textsf{ethyl acetate (\textbf{1b})}'' being
+% specific examples of an ``\textsf{acetic acid ester (\textbf{1})}''
+% structure.
+%
+% The solution presented here uses keys to identify structures, in a
+% similar way to the BibTeX, with a special format that allows
+% associating related structures to their exemplar structure. This is
+% done using keys that contain an exclamation mark |!| to separate the
+% key for an exemplar structure from a sub-key for the related
+% structures. Following our example above with might have keys
+% |acetate!methyl|, |acetate!ethyl| and |acetate| as the keys for methyl
+% acetate, ethyl acetate and acetic acid ester respectively.  Using keys
+% in this way would automatically give the labels
+% ``\textsf{\textbf{1a}}'', ``\textsf{\textbf{1b}}'' and
+% ``\textsf{\textbf{1}}''.  As an alternative you can manually provide a
+% more meaningful sub-label for each sub-key which could result in
+% ``\textsf{methyl acetate (\textbf{1-Me})}'' and ``\textsf{ethyl
+% acetate (\textbf{1-Et})}'' and ``\textsf{acetic acid ester
+% (\textbf{1})}'' structure.
+
+% Using sub-keys is entirely optional and you can write a complete
+% document without using the sub-key feature. Keys with sub-keys can be
+% freely mixed in a document with keys that do not have sub-keys. We
+% suggest you generally want to provide an exemplar key without sub-key
+% for each set of keys which have sub-keys. This allows you to refer in
+% the document to the group of related chemicals as well as the specific
+% structures. We have shown this above in our acetate examples.
+%
+% Hopefully the most difficult part of us
 % You identify each entity that you want labelled with a unique key and
 % an optional sub-key. In a chemistry document an entity would be a
 % chemical structure, the key represents the base structure and the
@@ -275,6 +244,79 @@
 % sub-key label into a number or letter. The default implementation uses
 % |\alph| to generate a letter. Users may redefine this macro to output
 % numbers instead of letters.
+% 
+% \section{Design brief}
+% 
+% The package should be able to consistently label an entity throughout
+% the document based on a user-defined key. The label can be either a
+% consecutive number or a user-defined label. These labels can be
+% combined with a sublabel, which can also be consecutive or
+% user-defined.
+% 
+% When sub-labels are used a user-supplied key and sub-key are
+% required. Any entity associated with the key without a sub-key is
+% considered to be a generic entity for any entities defined with the
+% same key and a sub-key. 
+% 
+% \subsection{Limits}
+% 
+% \begin{itemize}
+% \item The package can provide consecutive labels or user-defined
+%   labels but not both.
+% 
+% \item Unless user-defined labels are used, consecutive labels are
+%   numeric for labels and alphabetic for sub-labels.
+% 
+% \item The package can provide only a single set of consecutive labels.
+% 
+% \item The package can provide consecutive sub-labels or user-defined
+%   sub-labels but not both for each label.
+% \end{itemize}
+% 
+% \subsection{Actions}
+% 
+% \begin{itemize}
+% \item The first time the XXX, YYY macros appear in the latex document
+%   with a given key is where the consecutive number label for the key
+%   is defined (unless user-defined label are being used).
+% 
+% \item Using macros XXX, YYY provides the label without defining the
+%   consecutive number label. This allows the label to appear, for
+%   example in a table, abstract or figure, before the desired defining
+%   location of the label.
+% 
+% \item The names of entities can be defined anywhere in the document
+%   and appear in a user-controlled manner.
+% 
+% \item The basic macros typeset the entity name and label at the first
+%   defining reference position and only the label in other places.
+% 
+% \item A range of advanced macros allow greater control over the
+%   display of the entity name and label.  For example the user can
+%   output a label and sub-label but use the name of the generic entity.
+%   A chemistry example of this with ``ethyl acetate (1b)'' and its
+%   generic entity ``acetic acid ester (1)'' appearing as ``\dots{}gives
+%   the second acetic acid ester (1b)\dots{}''.
+% 
+% \item The label will be typeset in a particular, user configurable,
+%   style. The label should be consistently formatted, even in
+%   math-mode.
+% 
+% \item The label can be used transparently by other packages. For
+%   example it can be used with the \textsf{psfrag} package to inject
+%   the correct labels into figures at documentation preparation time
+%   rather than having to recreate new figures whenever the label
+%   numbering changes.
+% 
+% \end{itemize}
+% 
+% \subsection{Known bugs}
+% 
+% The package does not currently detect when output occurs at the
+% beginning of a sentence and automatically capitalise the first
+% non-capital letter. The only solution is to avoid using the macros
+% that might produce entity names at the start of a sentence.
+% 
 %
 % \section{Implementation}
 % 
