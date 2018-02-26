@@ -123,8 +123,8 @@
   \csname CN@#1@name\endcsname%
   \fi%
 }%
-\DeclareRobustCommand*{\CN@GetLabel}[3]{% key, foundbool,
-  % indexcount
+\DeclareRobustCommand*{\CN@GetLabel}[4]{% key, foundbool,
+  % indexcount, isstar
   \setboolean{#2}{true}%
   \CN@DEBUG{chem}{GetLabel: looking for '#1'}%
   % \if\csname CN@#1@label\endcsname\relax %if undef
@@ -139,16 +139,21 @@
   \setcounter{#3}{\csname CN@#1@label\endcsname}%
   \CN@DEBUG{chem}{GetLabel: Label count is \arabic{#3}}%
   \ifthenelse{\value{#3} = 0}{%
-    \CN@DEBUG{chem}{GetLabel: Found label '\csname
-      CN@#1@label\endcsname' for '#1' is zero.}%
+    \CN@DEBUG{chem}{GetLabel: Found label '\csname CN@#1@label\endcsname ' for '#1' is zero.}%
+    \ifthenelse{\boolean{#4}}{%
+    \CN@DEBUG{chem}{GetLabel: Used label '\csname CN@#1@labelUsed\endcsname '  for '#1'.}%
+    \expandafter\xdef\csname CN@#1@label\endcsname{\csname CN@#1@labelUsed\endcsname}%
+    \CN@DEBUG{chem}{GetLabel: Set label from used; '\csname
+      CN@#1@label\endcsname '.}%
+}{%
     \CN@DEBUG{chem}{GetLabel: MaxLabelIndex=\arabic{CN@MaxLabelIndex}}%
+    \write\@auxout{\string\CN@defineLabelUsed{#1}{\csname CN@#1@label\endcsname}}%
     \stepcounter{CN@MaxLabelIndex}%
-    \CN@DEBUG{chem}{GetLabel: Increment MaxLabelIndex to
-      \arabic{CN@MaxLabelIndex}}%
-    \expandafter\xdef\csname
-    CN@#1@label\endcsname{\arabic{CN@MaxLabelIndex}}%
+    \CN@DEBUG{chem}{GetLabel: Increment MaxLabelIndex to \arabic{CN@MaxLabelIndex}}%
+    \expandafter\xdef\csname CN@#1@label\endcsname{\arabic{CN@MaxLabelIndex}}%
     \setcounter{#3}{\csname CN@#1@label\endcsname}%
     \setboolean{#2}{false}%
+    \setboolean{CN@Warning}{true}}%
   }{%else
     % do nothing
   }%end if def to 0
