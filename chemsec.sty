@@ -249,23 +249,33 @@
 }%
 \DeclareRobustCommand*{\CN@ChemCiteStar}[1]{%
   % \CN@DEBUG{chem}{in Chemcite}%
-  \write\@auxout{\string\NoCite{#1}}\CN@ChemCite{#1}%
+  \setboolean{CN@Star}{false}%
+  \CN@ChemCite{#1}%
+  \setboolean{CN@Star}{true}%
 }
 \DeclareRobustCommand*{\CN@ChemFCiteStar}[1]{%
   % \CN@DEBUG{chem}{in ChemFullCite}%
-  \write\@auxout{\string\NoCite{#1}}\CN@ChemFCite{#1}%
+  \setboolean{CN@Star}{false}%
+  \CN@ChemFCite{#1}%
+  \setboolean{CN@Star}{true}%
 }%
 \DeclareRobustCommand*{\CN@ChemSCiteStar}[1]{%
   % \CN@DEBUG{chem}{in ChemShortCite}%
-  \write\@auxout{\string\NoCite{#1}}\CN@ChemSCite{#1}%
+  \setboolean{CN@Star}{false}%
+  \CN@ChemSCite{#1}%
+  \setboolean{CN@Star}{true}%
 }%
 \DeclareRobustCommand*{\CN@ChemMFCiteStar}[1]{%
   % \CN@DEBUG{chem}{in ChemMainFullCite}%
-  \write\@auxout{\string\NoCite{#1}}\CN@ChemMFCite{#1}%
+  \setboolean{CN@Star}{false}%
+  \CN@ChemMFCite{#1}%
+  \setboolean{CN@Star}{true}%
 }%
 \DeclareRobustCommand*{\CN@ChemMSCiteStar}[1]{%
   % \CN@DEBUG{chem}{in ChemMainShortCite}%
-  \write\@auxout{\string\NoCite{#1}}\CN@ChemMSCite{#1}%
+  \setboolean{CN@Star}{false}%
+  \CN@ChemMSCite{#1}%
+  \setboolean{CN@Star}{true}%
 }%
 \DeclareRobustCommand*{\ChemCite}{%
   \@ifstar{\CN@ChemCiteStar}{\CN@ChemCite}%
