@@ -99,6 +99,14 @@
   \CN@DEBUG{chem}{Attempt to redefine "#1" ignored.}%
   \fi%
 }
+\DeclareRobustCommand*{\CN@defineLabelUsed}[2]{%key, label
+  % check for previous definition of name
+  \if\csname CN@#1@labelUsed\endcsname\relax%ifdef
+  % label not defined
+  \CN@DEBUG{chem}{Presetting label of key "#1" to "#2".}%
+  \expandafter\gdef\csname CN@#1@labelUsed\endcsname{#2}%
+  \CN@DEBUG{chem}{Preset value '\csname CN@#1@labelUsed\endcsname'.}%
+}
 \DeclareRobustCommand*{\CN@GetFullName}[1]{%
   \if\csname CN@#1@name\endcsname\relax%if no name
   % and
