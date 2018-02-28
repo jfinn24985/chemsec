@@ -72,7 +72,9 @@
 \AtEndDocument{%
   \ifthenelse{\boolean{CN@Warning}}{%
     \PackageWarningNoLine{chemsec}{Chemsec-label(s) were used before they were
-      defined or were never defined.  Rerun to get chemsec-labels right}%
+      defined or were never defined.  Rerun to get chemsec-labels right. If 
+      this warning message persists check that all names and labels have been
+      defined in the text}%
   }{%else
     % do nothing
   }%end if
@@ -154,7 +156,7 @@
        \setboolean{#2}{false}%
        %% Check that @labelUsed matches @label or set @Warning
        \ifcsname CN@#1@labelUsed\endcsname%
-         \ifthenelse{\csname CN@#1@labelUsed\endcsname = \csname CN@#1@label\endcsname}{% predefined label matches label - do nothing
+         \ifthenelse{\equal{\csname CN@#1@labelUsed\endcsname}{\csname CN@#1@label\endcsname}}{% predefined label matches label - do nothing
          }{% predefined does not match.
            \CN@DEBUG{chemsec}{GetLabel: Local label does not match predefined label}
            \setboolean{CN@Warning}{true}%
