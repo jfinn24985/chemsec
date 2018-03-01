@@ -75,7 +75,7 @@
 % A cross-reference system designed for an arbitrary set of items.
 % Generates a document-order set of consecutive number labels that can
 % be cross-referenced anywhere in the document. The motivating example
-% is labelling chemical structures in a scientific document.
+% is labeling chemical structures in a scientific document.
 %
 % \section{Usage}
 %
@@ -86,7 +86,7 @@
 % typeset document for each chemical structure the first time the
 % structure is referenced in the document text. Subsequent references to
 % the structure should only use the label.  These labels should form a
-% numeric sequence, with the first chemical structure being labelled
+% numeric sequence, with the first chemical structure being labeled
 % \textbf{1}, the second \textbf{2} and so on.
 %
 % These labels share similar features to numeric bibliographic reference
@@ -100,12 +100,12 @@
 % the name of the chemical structure generally appears where it is first
 % used in the document along with its label rather than in a
 % bibliography or footnote. Secondly it is common to use a single
-% numeric label for closely related structures, appending a sublabel to
+% numeric label for closely related structures, appending a sub-label to
 % denote individual structures, usually lower-case letters.  For example
 % we might have ``\textsf{methyl acetate (\textbf{1a})}'' and
 % ``\textsf{ethyl acetate (\textbf{1b})}'' being specific examples of an
 % ``\textsf{acetic acid ester (\textbf{1})}'' structure. Lastly, you may
-% need to separate the logical and actual first occurence of a label,
+% need to separate the logical and actual first occurrence of a label,
 % allowing use of labels in abstracts and captions before a defining
 % macro call that sets the actual number of the label in the main
 % document sequence.
@@ -142,15 +142,26 @@
 %
 % \subsection{Known Issues}
 %
-% \subsection{Capitalisation of  names}
+% \subsection{Capitalization of  names}
 % 
-% The package cannot capitalise the name of an entity, which may be
-% necessary if an entity name appears at the beginning of a
-% sentence. The only solution is to avoid using the macros that might
-% produce entity names at the start of a sentence or manually type the
-% name and use a macro that only outputs a label.
+% The package cannot capitalize the name of an entity, for example if an
+% entity name appears at the beginning of a sentence. For example the
+% capitalization of a chemical name requires parsing and understanding
+% the complete chemical nomenclature, something well beyond the scope of
+% this package. It is also hard to automatically detect when
+% capitalization should occur. Currently, the solutions are to avoid
+% using the macros that might produce entity names at the start of a
+% sentence or to manually type the entity name and use a macro that only
+% outputs a label. A possible future extension of this package may allow
+% the specification of two names for a compound, one capitalized and one
+% not, as well as macros to select between them.
 % 
 % \subsubsection{Failure to issue warning}
+%
+% \emph{Note} that any labeling issue arising from this package is
+% always resolved when the document is processed twice in a row. It is
+% therefore recommended that, after making an edit, the user always
+% processes the document twice to ensure correct labeling.
 %
 % The user should get a warning if the for some reason the labels
 % typeset in the document are incorrect and the document processing
@@ -160,8 +171,8 @@
 % from the \textsl{aux} file need to be used they may either not be present
 % or differ from values set later in the document.  When this happens
 % the user should get a warning message, however a number of issues may
-% prevent this and it is always recommeded to process the document twice
-% after editing to ensure the correct labelling.
+% prevent this and it is always recommended to process the document twice
+% after editing to ensure the correct labeling.
 %
 % Known cases of failure to get a warning message are:
 % \begin{itemize}
@@ -169,17 +180,21 @@
 %   \textsf{abstract} environment, may fail to issue a warning about
 %   incorrect labels. (I think this is due to the boolean variable that
 %   signals an error being reset at the beginning of the document.)
-% \item Automatic sublabels. Currently we can't check to see if
-%   sublabels change during document processing. This is because
-%   sublabels are stored as text rather than numbers and text comparison
+% \item Automatic sub-labels. Currently we cannot check to see if
+%   sub-labels change during document processing. This is because
+%   sub-labels are stored as text rather than numbers and text comparison
 %   is surprisingly difficult in LaTeX.
+% \item User-defined sub-labels. We do not detect if a user-defined
+%   sub-label is defined after a request for the sub-label.  This is only
+%   an issue the first time a document is processed or when a
+%   |\DefineChemical| macro command is added to the document.
 % \end{itemize}
 %
-% \subsection{Defining structure names and sublabels}
+% \subsection{Defining structure names and sub-labels}
 %
 % \DescribeMacro{\DefineChemical} You define the names and optional
 % sub-label of a compound or entity using the |\DefineChemical|
-% \marg{key} \marg{name} \marg{sublabel} macro.  This command does not
+% \marg{key} \marg{name} \marg{sub-label} macro.  This command does not
 % display any output in the document nor does it define the first part
 % of the label.  This means you can define all the chemicals used in the
 % document in a single place rather than as they appear in the document.
@@ -188,8 +203,17 @@
 % matter where this macro is placed in the document the \textsf{chemsec}
 % package will use the information wherever needed.
 %
-% The \textsl{name} and \textsl{sublabel} parameters can contain many
-% LaTeX formatting commands, including the use of |$$| math-mode.
+% Leaving the \marg{sub-label} argument empty for a |main!sub| key turns
+% on automatic sub-labeling for this key. By default this generates
+% sequential alphabetic labels for each |sub| key with the same |main|
+% key for which there is no user defined sub-label. This means that you
+% can manually supply labels for some |main!sub| keys and also have
+% |main!sub| keys without a defined label.  This is advanced usage and
+% this package does not check to see if the automatically generated
+% labels match any of the user-defined labels.
+%
+% The \textsl{name} parameter can contain many LaTeX formatting
+% commands, including the use of |$$| math-mode.
 %
 % \subsection{\textsf{ChemCite} Macros}
 %
@@ -219,7 +243,7 @@
 % 
 % \DescribeMacro{\ChemFCite\marg{key}} This macro always displays the
 % structure name as well as the label for the given key. The |F| is a
-% pnemonic for \textsf{full}, indicating the full entry of the name and
+% mnemonic for \textsf{full}, indicating the full entry of the name and
 % label is always used. For example |\ChemFCite{acetate!methyl}| would
 % give ``methyl acetate (\textbf{1a})'' the first time it appeared as well
 % as elsewhere. The non-star form also
@@ -233,7 +257,7 @@
 % 
 % \DescribeMacro{\ChemSCite\marg{key}} In counterpoint to the
 % |\ChemFCite| macro, this always only outputs the label for the given
-% key.  The |S| is a pnemonic for \textsf{short}, indicating the short
+% key.  The |S| is a mnemonic for \textsf{short}, indicating the short
 % entry of just the label is always used. For example
 % |\ChemSCite{acetate!methyl}| would give ``\textbf{1a}'' the first time
 % it appeared as well as ``\textbf{1a}'' elsewhere. The non-star form
@@ -247,11 +271,11 @@
 % 
 % \DescribeMacro{\ChemMFCite\marg{key}} This macro always displays the
 % structure name of the main part of the key with the label for the
-% given key.  The |MF| is a pnemonic for \textsf{main full} or
+% given key.  The |MF| is a mnemonic for \textsf{main full} or
 % \textsf{mixed full}, indicating the full entry of the \textit{main}
 % (exemplar) name is used with the label and sub-label for the key.  For
 % example |\ChemMFCite{acetate!methyl}| would give ``acetic acid ester
-% (\textbf{1a})'' whereever it was used. The non-star form also sets the
+% (\textbf{1a})'' wherever it was used. The non-star form also sets the
 % value of the numeric label at the point it first appears in the
 % document. The star form uses in order; the current label if defined or
 % a value stored in the \textsl{aux} file from the previous time the
@@ -261,11 +285,11 @@
 % ``?? (\textbf{0??})'' or similar.
 % 
 % \DescribeMacro{\ChemMSCite\marg{key}} This macro always displays just
-% the label from the main part of the key.  The |MS| is a pnemonic for
+% the label from the main part of the key.  The |MS| is a mnemonic for
 % \textsf{main short} or \textsf{mixed short}, indicating the short
 % entry of just the \textit{main} (exemplar) label for the key.  For
 % example |\ChemMSCite{acetate!methyl}| would give ``\textbf{1}''
-% whereever it was used.  While this macro always gives exactly the same
+% wherever it was used.  While this macro always gives exactly the same
 % result as |\ChemSCite| with just the main part of a key
 % (e.g. |\ChemSCite{acetate}|), it is included here because it allows
 % the document writer to include more context in the document as it is
@@ -324,7 +348,7 @@
 % The package should be able to consistently label an entity throughout
 % the document based on a user-defined key. The label can be either a
 % consecutive number or a user-defined label. These labels can be
-% combined with a sublabel, which can also be consecutive or
+% combined with a sub-label, which can also be consecutive or
 % user-defined.
 % 
 % When sub-labels are used a user-supplied key and sub-key are
@@ -532,7 +556,7 @@
 %
 % \begin{itemize}
 % \item The \textsf{debug} option generates more error and warning
-%   messages as well as outputing draft data. It does this by redefining
+%   messages as well as outputting draft data. It does this by redefining
 %   the |\CN@DEBUG|, |\CN@WARN| and |\CN@DRAFT| macros.
 %    \begin{macrocode}
 \DeclareOption{debug}{%
@@ -591,7 +615,7 @@
 \expandafter\def\csname CN@@sublabel\endcsname{X}
 %    \end{macrocode}
 % \item |CN@KeyFound| is a boolean to signal whether the key was found
-%   in the keylist. Failure to be found indicates that this is the first
+%   in the key list. Failure to be found indicates that this is the first
 %   time this key was cited.
 %    \begin{macrocode}
 \newboolean{CN@KeyFound}
@@ -647,11 +671,11 @@
 % \end{macro}
 %
 % \begin{macro}{\CN@definenewchemical}\marg{main!sub
-%   key}\marg{name}\marg{sublabel}
+%   key}\marg{name}\marg{sub-label}
 %   Associate a key with a chemical name and sub-label. The instances of
 %   this macro written in the \textsf{aux} file are what define the
-%   current mapping of key to names and sublabels. There is a check to
-%   make sure the key is unique but there is no check that the sublabel
+%   current mapping of key to names and sub-labels. There is a check to
+%   make sure the key is unique but there is no check that the sub-label
 %   is unique.
 %
 %   This macro is the main macro that creates the table of key name and
@@ -666,12 +690,12 @@
   \else%
   % label not defined
   \CN@DEBUG{chemsec}{Defining new compound with key "#1". Name is "#2",
-    sublabel is "#3".}%
+    sub-label is "#3".}%
   \expandafter\gdef\csname CN@#1@label\endcsname{0}%
   \expandafter\gdef\csname CN@#1@name\endcsname{#2}%
-  \ifthenelse{\equal{#3}{-}}{%if no sublabel
+  \ifthenelse{\equal{#3}{-}}{%if no sub-label
   }{%else
-    \ifthenelse{\equal{#3}{}}{%if no sublabel
+    \ifthenelse{\equal{#3}{}}{%if no sub-label
     }{%else
       \expandafter\gdef\csname CN@#1@sublabel\endcsname{#3}%
     }%end if
@@ -733,7 +757,7 @@
   % use my own name
   \csname CN@#1@name\endcsname%
   \else%
-  \ifcsname CN@\CN@MainKey(#1)@name\endcsname%if mainkey name
+  \ifcsname CN@\CN@MainKey(#1)@name\endcsname%if main key name
   % Use main key name
   \csname CN@\CN@MainKey(#1)@name\endcsname%
   \else%
@@ -741,7 +765,7 @@
   \setboolean{CN@Warning}{true}%
   ??%
   \fi%endif main
-  \fi%endif fullkey
+  \fi%endif full key
 }%
 %    \end{macrocode}
 % \end{macro}
@@ -816,8 +840,8 @@
 \DeclareRobustCommand*{\CN@GetSubLabel}[3]{% key, found?, return-element
   \setboolean{#2}{true}%
   \CN@DEBUG{chemsec}{GetSubLabel: looking for sublabel of '#1'}%
-  \ifthenelse{\equal{\CN@MainKey(#1)}{#1}}{%if a mainkey
-    \CN@DEBUG{chemsec}{GetSubLabel: '#1' is a mainkey .: no sublabel}%
+  \ifthenelse{\equal{\CN@MainKey(#1)}{#1}}{%if a main key
+    \CN@DEBUG{chemsec}{GetSubLabel: '#1' is a main key .: no sublabel}%
     \xdef#3{}%
   }{%else
     \ifcsname CN@#1@sublabel\endcsname%if defined
@@ -840,7 +864,7 @@
        }{%
         \CN@DEBUG{chemsec}{GetSubLabel: Sublabel not previously defined}%
         \ifcsname CN@\CN@MainKey(#1)@sublabel\endcsname%if
-          % mainkey def
+          % main key def
           \setcounter{CN@SubLabelIndex}{\csname CN@\CN@MainKey(#1)@sublabel\endcsname}%
         \else%
           \setcounter{CN@SubLabelIndex}{0}%
