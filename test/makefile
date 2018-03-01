@@ -24,6 +24,12 @@ example4 : chemsec.sty example4.tex
 example4.tex :
 	cp ../example4.tex .
 
+example5 : chemsec.sty example5.tex
+	latex example5.tex
+
+example5.tex :
+	cp ../example5.tex .
+
 chemsec.sty :
 	cp ../chemsec.sty .
 
