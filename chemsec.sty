@@ -72,7 +72,7 @@
 \AtEndDocument{%
   \ifthenelse{\boolean{CN@Warning}}{%
     \PackageWarningNoLine{chemsec}{Chemsec-label(s) were used before they were
-      defined or were never defined.  Rerun to get chemsec-labels right. If 
+      defined or were never defined.  Rerun to get chemsec-labels right. If
       this warning message persists check that all names and labels have been
       defined in the text}%
   }{%else
@@ -86,7 +86,7 @@
   \ifcsname CN@#1@label\endcsname%ifdef
   % previous definition, do nothing
   \CN@DEBUG{chemsec}{Attempt to redefine key "#1" ignored.}%
-  \else
+  \else%
   % label not defined
   \CN@DEBUG{chemsec}{Defining new compound with key "#1". Name is "#2",
     sublabel is "#3".}%
@@ -122,7 +122,6 @@
     \CN@DEBUG{chemsec}{defineLabelUsed: Presetting sublabel of key "#1" to "#2" -> "\csname CN@#1@sublabelUsed\endcsname"}%
   \fi%
 }
-
 \DeclareRobustCommand*{\CN@GetFullName}[1]{%
   \ifcsname CN@#1@name\endcsname%if name
   % use my own name
