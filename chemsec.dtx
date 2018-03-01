@@ -38,7 +38,7 @@
 %</driver>
 % \fi
 %
-% \CheckSum{367}
+% \CheckSum{418}
 %
 % \CharacterTable
 %  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
@@ -142,6 +142,16 @@
 %
 % \subsection{Known Issues}
 %
+% \subsection{Capitalisation of  names}
+% 
+% The package cannot capitalise the name of an entity, which may be
+% necessary if an entity name appears at the beginning of a
+% sentence. The only solution is to avoid using the macros that might
+% produce entity names at the start of a sentence or manually type the
+% name and use a macro that only outputs a label.
+% 
+% \subsubsection{Failure to issue warning}
+%
 % The user should get a warning if the for some reason the labels
 % typeset in the document are incorrect and the document processing
 % needs to be repeated.  This can happen when using a macro that
@@ -153,7 +163,7 @@
 % prevent this and it is always recommeded to process the document twice
 % after editing to ensure the correct labelling.
 %
-% Known cases of failure to get a warning message are 
+% Known cases of failure to get a warning message are:
 % \begin{itemize}
 % \item Use of macros before the document begins, for example in the
 %   \textsf{abstract} environment, may fail to issue a warning about
@@ -196,7 +206,7 @@
 % \DescribeMacro{\ChemCite\marg{key}} Output the label for the given
 % key.  If this is the first time the key is used and the non-star form
 % is used the full name precedes the label, with a star no full name is used. For example
-% |\ChemCite{acetate!methyl}| could give ``methyl acetate \textbf{1a}''
+% |\ChemCite{acetate!methyl}| could give ``methyl acetate (\textbf{1a})''
 % the first time it appeared and ``\textbf{1a}'' elsewhere.
 % The non-star form also sets the value of the numeric label at the
 % point it first appears in the document. The star form uses in order;
@@ -211,16 +221,15 @@
 % structure name as well as the label for the given key. The |F| is a
 % pnemonic for \textsf{full}, indicating the full entry of the name and
 % label is always used. For example |\ChemFCite{acetate!methyl}| would
-% give ``methyl acetate \textbf{1a}'' the first time it appeared as well
-% as ``methyl acetate \textbf{1a}'' elsewhere. The non-star form also
+% give ``methyl acetate (\textbf{1a})'' the first time it appeared as well
+% as elsewhere. The non-star form also
 % sets the value of the numeric label at the point it first appears in
 % the document. The star form uses in order; the current label if
 % defined or a value stored in the \textsl{aux} file from the previous
 % time the document was processed or a dummy value. For example
 % |\ChemFCite*{acetate!methyl}| could give ``methyl acetate
-% \textbf{1a}'' if it can determine the labels or output a dummy value
-% ``?? \textbf{0??}'' (or less likely ``?? \textbf{0a}'' or ``??
-% \textbf{1??}'').
+% (\textbf{1a})'' if it can determine the labels or output a dummy value
+% ``?? (\textbf{0??})'' or similar.
 % 
 % \DescribeMacro{\ChemSCite\marg{key}} In counterpoint to the
 % |\ChemFCite| macro, this always only outputs the label for the given
@@ -242,15 +251,14 @@
 % \textsf{mixed full}, indicating the full entry of the \textit{main}
 % (exemplar) name is used with the label and sub-label for the key.  For
 % example |\ChemMFCite{acetate!methyl}| would give ``acetic acid ester
-% \textbf{1a}'' whereever it was used. The non-star form also sets the
+% (\textbf{1a})'' whereever it was used. The non-star form also sets the
 % value of the numeric label at the point it first appears in the
 % document. The star form uses in order; the current label if defined or
 % a value stored in the \textsl{aux} file from the previous time the
 % document was processed or a dummy value. For example
 % |\ChemMFCite*{acetate!methyl}| could give ``acetic acid ester
-% \textbf{1a}'' if it can determine the labels or output a dummy value
-% ``?? \textbf{0??}'' (or less likely ``?? \textbf{0a}'' or ``??
-% \textbf{1??}'').
+% (\textbf{1a})'' if it can determine the labels or output a dummy value
+% ``?? (\textbf{0??})'' or similar.
 % 
 % \DescribeMacro{\ChemMSCite\marg{key}} This macro always displays just
 % the label from the main part of the key.  The |MS| is a pnemonic for
@@ -312,8 +320,7 @@
 % \section{Design brief}
 % 
 % This section contains a description of what this package sets out to
-% achieve.
-% 
+% achieve.  
 % The package should be able to consistently label an entity throughout
 % the document based on a user-defined key. The label can be either a
 % consecutive number or a user-defined label. These labels can be
@@ -376,14 +383,6 @@
 %   numbering changes.
 % 
 % \end{itemize}
-% 
-% \subsection{Known bugs}
-% 
-% The package does not currently detect when output occurs at the
-% beginning of a sentence and automatically capitalise the first
-% non-capital letter. The only solution is to avoid using the macros
-% that might produce entity names at the start of a sentence.
-% 
 % 
 % \section{Package options}
 % 
@@ -613,7 +612,8 @@
 % \item |CN@Warning| is a boolean that signals that the document has
 %   possible incorrect labels and needs to be reprocessed. This is
 %   similar to other places where LaTeX generates warnings
-%   for automatically generated labels.%    \begin{macrocode}
+%   for automatically generated labels.
+%    \begin{macrocode}
 \newboolean{CN@Warning}
 \setboolean{CN@Warning}{false}
 \AtEndDocument{%
@@ -677,11 +677,11 @@
     }%end if
   }%end if
   \fi%
-}
+}%
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\CN@defineLabelUsed} \marg{main!sub key}} \marg{label
+% \begin{macro}{\CN@defineLabelUsed} \marg{main!sub key} \marg{label
 %   index} Associate a label with a |main| key. The instances of this
 %   macro written in the \textsf{aux} file are what define the mapping
 %   of key to label used to typeset a label before a macro call that
@@ -701,8 +701,8 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}{\CN@GetFullNamedefineSublabelUsed} \marg{main!sub key}}
-% \marg{label index}
+% \begin{macro}{\CN@defineSublabelUsed} \marg{main!sub key}
+% \marg{label value}
 %   Associate a sublabel with a |main!sub| key. The instances of this macro written in
 %   the \textsf{aux} file are what define the mapping of key to sublabel
 %   used to typeset a sublabel before a macro call that defines the position
@@ -757,7 +757,7 @@
 %   \textsf{CN\@{}MaxLabelIndex}. This also writes a call to
 %   |\CN@defineLabelUsed| in the \textsl{aux} for the next processing
 %   run.
-%    \Begin{macrocode}
+%    \begin{macrocode}
 \DeclareRobustCommand*{\CN@GetLabel}[3]{% key, foundbool,
   % indexcount
   \setboolean{#2}{true}%
