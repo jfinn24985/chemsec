@@ -45,7 +45,8 @@
   \arabic{#1}}
 \DeclareRobustCommand*{\ChemSubCounterStyle}[1]{%
   \alph{#1}}
-\makeatletter \gdef\CN@DEBUG #1#2{}
+\makeatletter
+\gdef\CN@DEBUG #1#2{}
 \gdef\CN@WARN #1#2{\PackageInfo{#1}{#2}}
 \gdef\CN@DRAFT #1{}
 \DeclareOption{debug}{%
@@ -56,8 +57,8 @@
 \DeclareOption{draft}{%
   \gdef\CN@DRAFT #1{$^{[#1]}$}%
 } \ProcessOptions
-
-\newcounter{CN@MaxLabelIndex} \setcounter{CN@MaxLabelIndex}{0}
+\newcounter{CN@MaxLabelIndex}
+\setcounter{CN@MaxLabelIndex}{0}
 \newcounter{CN@LabelIndex}
 \newcounter{CN@SubLabelIndex}
 \expandafter\def\csname CN@@label\endcsname{999}
@@ -88,13 +89,12 @@
   \CN@DEBUG{chemsec}{Attempt to redefine key "#1" ignored.}%
   \else%
   % label not defined
-  \CN@DEBUG{chemsec}{Defining new compound with key "#1". Name is "#2",
-    sublabel is "#3".}%
+  \CN@DEBUG{chemsec}{Defining new compound with key "#1". Name is "#2", sub-label is "#3".}%
   \expandafter\gdef\csname CN@#1@label\endcsname{0}%
   \expandafter\gdef\csname CN@#1@name\endcsname{#2}%
-  \ifthenelse{\equal{#3}{-}}{%if no sublabel
+  \ifthenelse{\equal{#3}{-}}{%if no sub-label
   }{%else
-    \ifthenelse{\equal{#3}{}}{%if no sublabel
+    \ifthenelse{\equal{#3}{}}{%if no sub-label
     }{%else
       \expandafter\gdef\csname CN@#1@sublabel\endcsname{#3}%
     }%end if
@@ -127,7 +127,7 @@
   % use my own name
   \csname CN@#1@name\endcsname%
   \else%
-  \ifcsname CN@\CN@MainKey(#1)@name\endcsname%if mainkey name
+  \ifcsname CN@\CN@MainKey(#1)@name\endcsname%if main key name
   % Use main key name
   \csname CN@\CN@MainKey(#1)@name\endcsname%
   \else%
@@ -135,7 +135,7 @@
   \setboolean{CN@Warning}{true}%
   ??%
   \fi%endif main
-  \fi%endif fullkey
+  \fi%endif full key
 }%
 \DeclareRobustCommand*{\CN@GetLabel}[3]{% key, foundbool,
   % indexcount
@@ -182,8 +182,8 @@
 \DeclareRobustCommand*{\CN@GetSubLabel}[3]{% key, found?, return-element
   \setboolean{#2}{true}%
   \CN@DEBUG{chemsec}{GetSubLabel: looking for sublabel of '#1'}%
-  \ifthenelse{\equal{\CN@MainKey(#1)}{#1}}{%if a mainkey
-    \CN@DEBUG{chemsec}{GetSubLabel: '#1' is a mainkey .: no sublabel}%
+  \ifthenelse{\equal{\CN@MainKey(#1)}{#1}}{%if a main key
+    \CN@DEBUG{chemsec}{GetSubLabel: '#1' is a main key .: no sublabel}%
     \xdef#3{}%
   }{%else
     \ifcsname CN@#1@sublabel\endcsname%if defined
@@ -206,7 +206,7 @@
        }{%
         \CN@DEBUG{chemsec}{GetSubLabel: Sublabel not previously defined}%
         \ifcsname CN@\CN@MainKey(#1)@sublabel\endcsname%if
-          % mainkey def
+          % main key def
           \setcounter{CN@SubLabelIndex}{\csname CN@\CN@MainKey(#1)@sublabel\endcsname}%
         \else%
           \setcounter{CN@SubLabelIndex}{0}%

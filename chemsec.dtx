@@ -529,7 +529,8 @@
 %    debugging.  This is redefined if the |debug| package option is used
 %    to output debugging messages in the processing log.
 %    \begin{macrocode}
-\makeatletter \gdef\CN@DEBUG #1#2{}
+\makeatletter
+\gdef\CN@DEBUG #1#2{}
 %    \end{macrocode}
 % \end{macro}
 % \begin{macro}{\CN@WARN}
@@ -571,7 +572,6 @@
 \DeclareOption{draft}{%
   \gdef\CN@DRAFT #1{$^{[#1]}$}%
 } \ProcessOptions
-
 %    \end{macrocode}
 % \end{itemize}
 %
@@ -583,7 +583,8 @@
 % \begin{itemize}
 % \item |CN@MaxLabelIndex| tracks the maximum label index.
 %    \begin{macrocode}
-\newcounter{CN@MaxLabelIndex} \setcounter{CN@MaxLabelIndex}{0}
+\newcounter{CN@MaxLabelIndex}
+\setcounter{CN@MaxLabelIndex}{0}
 %    \end{macrocode}
 % \item |CN@LabelIndex| is the number of the current label.
 %    \begin{macrocode}
@@ -689,8 +690,7 @@
   \CN@DEBUG{chemsec}{Attempt to redefine key "#1" ignored.}%
   \else%
   % label not defined
-  \CN@DEBUG{chemsec}{Defining new compound with key "#1". Name is "#2",
-    sub-label is "#3".}%
+  \CN@DEBUG{chemsec}{Defining new compound with key "#1". Name is "#2", sub-label is "#3".}%
   \expandafter\gdef\csname CN@#1@label\endcsname{0}%
   \expandafter\gdef\csname CN@#1@name\endcsname{#2}%
   \ifthenelse{\equal{#3}{-}}{%if no sub-label
