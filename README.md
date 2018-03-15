@@ -31,6 +31,7 @@ use:
     make clean example1
 
 or
+
     make LATEX=latex clean example1
 
 if you want to use a latex program other than `pdflatex`.
